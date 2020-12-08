@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foody_app/resource/app_colors.dart';
+import 'package:foody_app/view/addPostView.dart';
 import 'package:foody_app/view/chatRoomView.dart';
 
 class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -13,6 +14,14 @@ class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
         return ChatRoomView();
+      },
+    ));
+  }
+
+  void openPhoneGallery(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return AddPostView();
       },
     ));
   }
@@ -41,6 +50,16 @@ class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ],
+      ),
+      leading: IconButton(
+        icon: const Icon(
+          CupertinoIcons.plus_app,
+          size: 30,
+        ),
+        color: AppColors.ACCENT_COLOR,
+        onPressed: () {
+          openPhoneGallery(context);
+        },
       ),
       actions: [
         Padding(
