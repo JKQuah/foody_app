@@ -4,6 +4,8 @@ import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/view/addPostView.dart';
 import 'package:foody_app/view/chatRoomView.dart';
 
+import '../resource/app_constants.dart';
+
 class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const FoodyAppBar({Key key}) : super(key: key);
 
@@ -41,7 +43,7 @@ class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           Text(
-            "FoodyApp",
+            AppConstants.APP_NAME,
             style: TextStyle(
               fontFamily: 'Nexa',
               fontWeight: FontWeight.bold,
