@@ -1,1 +1,9 @@
-# foody_app
+Eating food is vital to us as taking three meals per day is a daily routine for us. Hence, questions such as “What food should I take for dinner/ lunch?” , “Whether restaurant A or restaurant B have the better taste?” and “With whom should I take dinner/ lunch?” are haunting us everyday. 
+<br><br>
+Besides, we are lucky to be born in this unique country within Southeast Asia where we gather at least 5 different races of citizens here. Therefore, there are many different types of local food we can try out. While we go to Penang, we must try their Penang laksa, while we go to Negeri Sembilan, we have to eat Seremban Siew Pau. This happened for any location in Malaysia as we got a variety of  local cuisines to try with. As travelers who are new to the place, we might not know where to find the place with the best local cuisine.
+<br><br>
+Do you feel your appetite is not as good while you are eating alone? [1] Investigation shows that the food seems to become more delicious when you eat with a bunch of people that you like. Hence, we always want to eat with a bunch of people as humans are always living as a group. 
+<br><br>
+To solve all the problems above, we propose a mobile application called Foodie Vlog. We can simplify many daily troubles using this app as first, we can follow the app suggestion for our daily food. We need not worry about what to eat for lunch every morning. Secondly, we will know in that particular location, which restaurant is most famous for that particular food. Hence by using our Foodie Vlog app, we can prepare beforehand and make arrangements to try the local cuisine which is famous for that particular location. Lastly, we can gather a bunch of people with the same interest for particular food through our app. Hence, we will not feel alone while we are hunting for good food.
+<br><br>
+This mobile application will be built with Flutter meanwhile the backend server will be built with Firestore, Express.js and Node.js. The application is targeted to be completed by Week 14.
