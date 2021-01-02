@@ -25,38 +25,41 @@ class _PostWidgetState extends State<PostWidget> {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 10),
-              CircleAvatar(
-                radius: 25,
-                backgroundColor: AppColors.PRIMARY_COLOR,
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                ),
-                // CircleAvatar(
-                //   radius: 20,
-                //   backgroundColor: Colors.white,
-                //   backgroundImage:
-                //       AssetImage(post.profileImage ?? 'assets/app_logo.png'),
+          ListTile(
+            leading: CircleAvatar(
+              radius: 20,
+              backgroundColor: AppColors.PRIMARY_COLOR,
+              child: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              // CircleAvatar(
+              //   radius: 20,
+              //   backgroundColor: Colors.white,
+              //   backgroundImage:
+              //       AssetImage(post.profileImage ?? 'assets/app_logo.png'),
 
-                // ),
+              // ),
+            ),
+            title: Text(
+              widget.post.username,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.TEXT_COLOR,
               ),
-              SizedBox(width: 10),
-              Text(
-                widget.post.username,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.TEXT_COLOR,
-                ),
+            ),
+            subtitle: Text(
+              widget.post.location ?? 'Default Restaurant',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: AppColors.PRIMARY_COLOR,
               ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
+            ),
+            trailing: Icon(
+              Icons.location_on,
+              size: 30,
+            ),
           ),
           Row(
             children: [
@@ -68,7 +71,7 @@ class _PostWidgetState extends State<PostWidget> {
                     fit: BoxFit.fill,
 
                     image: NetworkImage(
-                      "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/grilled-lobster-tail-004-1553897798.jpg",
+                      "https://64.media.tumblr.com/9c54cf83b096e7b31bff2a444eb0a979/17f389f91054af1f-45/s1280x1920/233b6a8342eb701279ac787936268f747b96dc3f.png",
                     ),
                     // Image.asset(
                     //   post.postImages ?? 'assets/app_logo.png',
@@ -80,7 +83,7 @@ class _PostWidgetState extends State<PostWidget> {
               Container(
                 height: 200,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
@@ -105,9 +108,12 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
-                      child: Icon(
-                        CupertinoIcons.chat_bubble_text,
-                        size: 35,
+                      child: IconButton(
+                        icon: Icon(
+                          CupertinoIcons.chat_bubble_text,
+                          size: 35,
+                        ),
+                        onPressed: () {},
                       ),
                     ),
                   ],
@@ -117,27 +123,7 @@ class _PostWidgetState extends State<PostWidget> {
           ),
           SizedBox(height: 20),
           Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Icon(
-                  Icons.location_on,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                widget.post.location ?? 'Default Restaurant',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.PRIMARY_COLOR,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Padding(
@@ -160,39 +146,54 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
               ),
               SizedBox(width: 20),
-              Icon(Icons.sentiment_satisfied_alt),
-              SizedBox(width: 5),
-              Text(
-                widget.post.happyScore ?? '0.0',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                  color: AppColors.PRIMARY_COLOR,
-                ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.sentiment_satisfied_alt),
+                  SizedBox(width: 5),
+                  Text(
+                    widget.post.happyScore ?? '0.0',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: AppColors.PRIMARY_COLOR,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 5),
-              Icon(Icons.cleaning_services),
-              SizedBox(width: 5),
-              Text(
-                widget.post.cleanScore ?? '0.0',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                  color: AppColors.PRIMARY_COLOR,
-                ),
+              Row(
+                children: [
+                  Icon(Icons.cleaning_services),
+                  SizedBox(width: 5),
+                  Text(
+                    widget.post.cleanScore ?? '0.0',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: AppColors.PRIMARY_COLOR,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 5),
-              Icon(Icons.restaurant),
-              SizedBox(width: 5),
-              Text(
-                widget.post.tasteScore ?? '0.0',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                  color: AppColors.PRIMARY_COLOR,
-                ),
+              Row(
+                children: [
+                  Icon(Icons.restaurant),
+                  SizedBox(width: 5),
+                  Text(
+                    widget.post.tasteScore ?? '0.0',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: AppColors.PRIMARY_COLOR,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 5),
             ],
           ),
           SizedBox(height: 10),
@@ -209,9 +210,14 @@ class _PostWidgetState extends State<PostWidget> {
                   ),
                 ),
               ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.only(left: 12.0),
                   child: Text(
                     widget.post.caption ??
                         'Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumpsumLorem ipsum',
