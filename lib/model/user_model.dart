@@ -1,5 +1,7 @@
 class UserModel {
   String email;
+  int id;
+  String imageUrl;
   String username;
   String gender;
   String address;
@@ -8,6 +10,8 @@ class UserModel {
 
   UserModel({
     this.email,
+    this.id,
+    this.imageUrl,
     this.username,
     this.gender,
     this.address,
