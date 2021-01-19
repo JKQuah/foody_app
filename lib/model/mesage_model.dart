@@ -2,8 +2,7 @@ import 'package:foody_app/model/user_model.dart';
 
 class Message {
   final UserModel sender;
-  final String
-  time;
+  final String time;
   final String text;
   final bool isLiked;
   final bool unread;
@@ -21,44 +20,44 @@ class Message {
 final UserModel currentUser = UserModel(
   id: 0,
   username: 'Current User',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 
 // OTHER USERS
 final UserModel greg = UserModel(
   id: 1,
   username: 'Greg',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 final UserModel james = UserModel(
   id: 2,
   username: 'James',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 final UserModel john = UserModel(
   id: 3,
   username: 'John',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 final UserModel olivia = UserModel(
   id: 4,
   username: 'Olivia',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 final UserModel sam = UserModel(
   id: 5,
   username: 'Sam',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 final UserModel sophia = UserModel(
   id: 6,
   username: 'Sophia',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 final UserModel steven = UserModel(
   id: 7,
   username: 'Steven',
-  imageUrl: 'assets/images/img.jpg',
+  imageUrl: 'assets/images/fsktm.jpg',
 );
 
 // FAVORITE CONTACTS
