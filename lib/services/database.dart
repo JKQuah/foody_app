@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DatabaseMethods{
+class DatabaseMethods {
+  getUserByUsername(String username) {}
 
-  getUserByUsername(String username){
-
-  }
-
-  uploaduserinfo(String name, String email){
-    FirebaseFirestore.instance.collection("users")
-
+  uploaduserinfo(String name, String email) {
+    FirebaseFirestore.instance.collection("users");
   }
 }
