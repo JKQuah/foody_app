@@ -137,7 +137,7 @@ class _PostWidgetState extends State<PostWidget> {
               SizedBox(width: 10),
               Center(
                 child: Text(
-                  widget.post.averageScore ?? '0.0',
+                  widget.post.services ?? '-',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0,
@@ -157,7 +157,7 @@ class _PostWidgetState extends State<PostWidget> {
                   Icon(Icons.sentiment_satisfied_alt),
                   SizedBox(width: 5),
                   Text(
-                    widget.post.happyScore ?? '0.0',
+                    widget.post.services ?? '-',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
@@ -171,7 +171,7 @@ class _PostWidgetState extends State<PostWidget> {
                   Icon(Icons.cleaning_services),
                   SizedBox(width: 5),
                   Text(
-                    widget.post.cleanScore ?? '0.0',
+                    widget.post.cleanliness ?? '-',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
@@ -185,7 +185,7 @@ class _PostWidgetState extends State<PostWidget> {
                   Icon(Icons.restaurant),
                   SizedBox(width: 5),
                   Text(
-                    widget.post.tasteScore ?? '0.0',
+                    widget.post.taste ?? '-',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,

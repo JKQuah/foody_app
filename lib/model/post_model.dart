@@ -1,23 +1,25 @@
 class PostModel {
+  int id;
+  int userId;
   String username;
-  String profileImage;
   String postImages;
   String location;
   String caption;
-  double averageScore;
-  double happyScore;
-  double cleanScore;
-  double tasteScore;
+  double services;
+  double cleanliness;
+  double taste;
+  double price;
 
   PostModel({
+    this.id,
+    this.userId,
     this.username,
-    this.profileImage,
     this.postImages,
     this.location,
     this.caption,
-    this.averageScore,
-    this.happyScore,
-    this.cleanScore,
-    this.tasteScore,
+    this.services,
+    this.cleanliness,
+    this.taste,
+    this.price,
   });
 }
