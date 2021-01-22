@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/utils/sharedPreferencesUtils.dart';
 import 'package:foody_app/widget/bottom_nav_bar.dart';
 
 void main() {
@@ -26,6 +27,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE2MTEyNzg4NTUsImV4cCI6MTYxMTM2NTI1NX0.bIJesgzyHlN8txvcW_TSc05ppGgQRv8ciEzmLm0gHXk";
+    SharedPreferencesUtils.saveJWToken(jwtToken);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return BottomNavBar();
