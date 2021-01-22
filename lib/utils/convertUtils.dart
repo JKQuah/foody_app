@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DateUtils {
+class ConvertUtils {
   static DateTime fromIsoStrToDateTime(String isoString) {
     if (isoString == null) return null;
     return DateTime.parse(isoString);

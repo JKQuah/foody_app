@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foody_app/model/meat_model.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
-import 'package:foody_app/utils/dateUtils.dart';
+import 'package:foody_app/utils/convertUtils.dart';
 import 'package:foody_app/utils/validatorUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:foody_app/widget/app_bar.dart';
@@ -32,10 +32,10 @@ class _MeatCreateState extends State<MeatCreate> {
     print(meatModel.toJson());
     titleCtl.text = meatModel.title;
     descriptionCtl.text = meatModel.description;
-    startDateCtl.text = DateUtils.fromDateTimeToDateStr(meatModel.startTime);
-    startTimeCtl.text = DateUtils.fromDateTimeToTimeStr(meatModel.startTime);
-    endDateCtl.text = DateUtils.fromDateTimeToDateStr(meatModel.endTime);
-    endTimeCtl.text = DateUtils.fromDateTimeToTimeStr(meatModel.endTime);
+    startDateCtl.text = ConvertUtils.fromDateTimeToDateStr(meatModel.startTime);
+    startTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(meatModel.startTime);
+    endDateCtl.text = ConvertUtils.fromDateTimeToDateStr(meatModel.endTime);
+    endTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(meatModel.endTime);
     maxParticipantCtl.text = meatModel.maxParticipant.toString();
     super.didChangeDependencies();
   }
@@ -113,7 +113,7 @@ class _MeatCreateState extends State<MeatCreate> {
                                         lastDate: DateTime(2100));
 
                                     startDateCtl.text =
-                                        DateUtils.fromDateTimeToDateStr(date);
+                                        ConvertUtils.fromDateTimeToDateStr(date);
 
                                     setState(() {
                                       meatModel.startTime = new DateTime(
