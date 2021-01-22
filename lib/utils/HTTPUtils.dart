@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SharedPreferencesUtils {
+class HTTPUtils {
 
   static const String jwtKey = 'jwt';
 
@@ -17,5 +17,11 @@ class SharedPreferencesUtils {
   static void removeJWToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove(jwtKey);
+  }
+
+  static Future<Map<String, String>> getHeaders() async {
+    String jwtToken = await readJWToken();
+    Map<String, String> headers = {"Authorization": "Bearer " + jwtToken};
+    return headers;
   }
 }

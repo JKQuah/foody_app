@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foody_app/utils/sharedPreferencesUtils.dart';
+import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:foody_app/widget/bottom_nav_bar.dart';
 
 void main() {
