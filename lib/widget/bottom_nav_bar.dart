@@ -4,7 +4,7 @@ import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/view/findFriendView.dart';
 import 'package:foody_app/view/foodSuggestion.dart';
 import 'package:foody_app/view/homeView.dart';
-import 'package:foody_app/view/meetAndEatView.dart';
+import 'package:foody_app/view/meat/meatViewAll.dart';
 import 'package:foody_app/view/profileView.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -20,7 +20,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final _viewOptions = [
     HomeView(),
     FindFriendView(),
-    MeetAndEatView(),
+    MeatViewAll(),
     FoodSuggestionView(),
     ProfileView()
   ];
