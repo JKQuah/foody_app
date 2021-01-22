@@ -1,5 +1,5 @@
 import 'package:foody_app/model/preference_model.dart';
-import 'package:foody_app/utils/dateUtils.dart';
+import 'package:foody_app/utils/convertUtils.dart';
 
 import 'location_dto.dart';
 
@@ -43,8 +43,8 @@ class MeatModel {
       title: json['title'] as String,
       description: json['description'] as String,
       maxParticipant: json['maxParticipant'] as int,
-      startTime: DateUtils.fromIsoStrToDateTime(json['startTime'] as String),
-      endTime: DateUtils.fromIsoStrToDateTime(json['endTime'] as String),
+      startTime: ConvertUtils.fromIsoStrToDateTime(json['startTime'] as String),
+      endTime: ConvertUtils.fromIsoStrToDateTime(json['endTime'] as String),
       status: json['status'] as String,
       locationDTO: LocationDTO.fromJson(json['locationDTO']),
       totalParticipants: json['totalParticipants'] as int,
@@ -52,8 +52,8 @@ class MeatModel {
       preferences: (json['preferences'] as List<dynamic>)
         .map((dynamic item) => PreferenceModel.fromJson(item))
         .toList(),
-      createdDate: DateUtils.fromIsoStrToDateTime(json['createdDate'] as String),
-      lastModifiedDate: DateUtils.fromIsoStrToDateTime(json['lastModifiedDate'] as String),
+      createdDate: ConvertUtils.fromIsoStrToDateTime(json['createdDate'] as String),
+      lastModifiedDate: ConvertUtils.fromIsoStrToDateTime(json['lastModifiedDate'] as String),
     );
   }
 

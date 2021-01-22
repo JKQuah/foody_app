@@ -1,4 +1,4 @@
-import 'package:foody_app/utils/dateUtils.dart';
+import 'package:foody_app/utils/convertUtils.dart';
 
 class PreferenceModel {
   int id;
@@ -21,8 +21,8 @@ class PreferenceModel {
       id: json['id'] as int,
       name: json['name'] as String,
       description: json['description'] as String,
-      createdDate: DateUtils.fromIsoStrToDateTime(json['createdDate'] as String),
-      lastModifiedDate: DateUtils.fromIsoStrToDateTime(json['lastModifiedDate'] as String),
+      createdDate: ConvertUtils.fromIsoStrToDateTime(json['createdDate'] as String),
+      lastModifiedDate: ConvertUtils.fromIsoStrToDateTime(json['lastModifiedDate'] as String),
     );
   }
 }
