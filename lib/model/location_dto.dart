@@ -1,3 +1,5 @@
+import 'package:foody_app/utils/convertUtils.dart';
+
 class LocationDTO {
   double latitude;
   double longitude;
@@ -9,8 +11,8 @@ class LocationDTO {
 
   factory LocationDTO.fromJson(Map<String, dynamic> json) {
     return LocationDTO(
-      latitude: json['latitude'] as double,
-      longitude: json['longitude'] as double,
+      latitude: ConvertUtils.fromNumberToDouble(json['latitude']),
+      longitude: ConvertUtils.fromNumberToDouble(json['longitude']),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:foody_app/model/meat_model.dart';
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/utils/HTTPUtils.dart';
+import 'package:foody_app/utils/convertUtils.dart';
 import 'package:http/http.dart';
 
 class MeatHTTPService {
@@ -16,7 +18,7 @@ class MeatHTTPService {
         headers: headers, body: jsonEncode(meatModel.toJson()));
     if (res.statusCode == 201) {
       Map<String, dynamic> json = jsonDecode(res.body);
-      return json["meatId"];
+      return ConvertUtils.fromDynamicToInt(json["meatId"]);
     } else {
       throw Exception("Error at MeatHTTPService createMeat");
     }
@@ -33,7 +35,7 @@ class MeatHTTPService {
     print(res.statusCode);
     if (res.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(res.body);
-      return json["meatId"];
+      return ConvertUtils.fromDynamicToInt(json["meatId"]);
     } else {
       throw Exception("Error at MeatHTTPService updateMeat");
     }
@@ -45,7 +47,7 @@ class MeatHTTPService {
     Response res = await put(requestUrl, headers: headers);
     if (res.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(res.body);
-      return json["meatId"];
+      return ConvertUtils.fromDynamicToInt(json["meatId"]);
     } else {
       throw Exception("Error at MeatHTTPService cancelMeat");
     }
@@ -97,7 +99,7 @@ class MeatHTTPService {
     Response res = await post(requestUrl, headers: headers);
     if (res.statusCode == 201) {
       Map<String, dynamic> json = jsonDecode(res.body);
-      return json["meatId"];
+      return ConvertUtils.fromDynamicToInt(json["meatId"]);
     } else {
       throw Exception("Error at MeatHTTPService joinMeat");
     }
@@ -109,7 +111,7 @@ class MeatHTTPService {
     Response res = await put(requestUrl, headers: headers);
     if (res.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(res.body);
-      return json["meatId"];
+      return ConvertUtils.fromDynamicToInt(json["meatId"]);
     } else {
       throw Exception("Error at MeatHTTPService unjoinMeat");
     }
