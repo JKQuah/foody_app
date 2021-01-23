@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/view/meat/meatCreate.dart';
+import 'package:foody_app/view/meat/meatViewOne.dart';
 import 'package:foody_app/widget/app_bar.dart';
 
 class MeatViewAll extends StatefulWidget {
@@ -20,7 +21,7 @@ class _MeatViewAllState extends State<MeatViewAll> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MeatCreate()),
+              MaterialPageRoute(builder: (context) => MeatViewOne()),
             );
           },
           icon: Icon(Icons.alternate_email),
