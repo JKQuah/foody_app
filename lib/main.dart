@@ -29,8 +29,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE2MTEyNzg4NTUsImV4cCI6MTYxMTM2NTI1NX0.bIJesgzyHlN8txvcW_TSc05ppGgQRv8ciEzmLm0gHXk";
-    SharedPreferencesUtils.saveJWToken(jwtToken);
+    String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE2MTEzNjU0MzMsImV4cCI6MTYxMTQ1MTgzM30.LjLj_kdKjeTY0Ip4ks9suABW6QoPCW7wusIAZ7kQdpA";
+    HTTPUtils.saveJWToken(jwtToken);
     super.initState();
   }
   @override
