@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/model/post_model.dart';
+// import 'package:foody_app/view_model/post_view_model.dart';
 import 'package:foody_app/widget/app_bar.dart';
 import 'package:foody_app/widget/post_widget.dart';
-
+import 'package:foody_app/services/postService.dart';
 import '../resource/app_colors.dart';
 import '../resource/app_constants.dart';
 
@@ -14,11 +15,14 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  List<PostModel> posts = [
-    PostModel(username: 'quah_jia_kai'),
-    PostModel(username: 'QJK 2'),
-    PostModel(username: 'QJK 3'),
-  ];
+  Future<List<PostModel>> posts;
+
+  @override
+  void initState() {
+    super.initState();
+    posts = PostService().fetchPosts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,16 +47,22 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           Flexible(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index) => Column(
-                children: posts
-                    .map((post) => PostWidget(
-                          post: post,
-                        ))
-                    .toList(),
-              ),
+            child: FutureBuilder<List<PostModel>>(
+              future: posts,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      final item = snapshot.data[index];
+                      return PostWidget(post: item);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return CircularProgressIndicator();
+              },
             ),
           ),
         ],
