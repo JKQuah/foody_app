@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:foody_app/model/like_model.dart';
 import 'package:foody_app/model/post_model.dart';
+import 'package:foody_app/services/postService.dart';
 import 'package:foody_app/services/userService.dart';
 import 'package:foody_app/view/commentView.dart';
+import 'package:foody_app/utils/mapUtils.dart';
 
 import '../resource/app_colors.dart';
 
@@ -32,12 +35,15 @@ class _PostWidgetState extends State<PostWidget> {
             widget.post.cleanliness +
             widget.post.price) /
         4;
-    getOwnerId();
+    getOwnerIdAndLikes();
   }
 
-  void getOwnerId() async {
+  void getOwnerIdAndLikes() async {
     dynamic user = await UserService().getSelfId();
     ownerId = user['id'];
+    Like like = new Like(postId: widget.post.id, userId: ownerId);
+    bool isLiked = await PostService().readLike(like);
+    this.liked = isLiked;
   }
 
   void openCommentView(BuildContext context) {
@@ -79,15 +85,21 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
             subtitle: Text(
-              widget.post.location ?? 'Default Restaurant',
+              widget.post.location.locationName ?? 'No Restaurant',
               style: TextStyle(
                 fontSize: 18.0,
                 color: AppColors.PRIMARY_COLOR,
               ),
             ),
-            trailing: Icon(
-              Icons.location_on,
-              size: 30,
+            trailing: IconButton(
+              icon: Icon(
+                Icons.location_on,
+                size: 30.0,
+              ),
+              onPressed: () {
+                MapUtils.openMap(widget.post.location.latitude,
+                    widget.post.location.longitude);
+              },
             ),
           ),
           Row(
@@ -97,7 +109,7 @@ class _PostWidgetState extends State<PostWidget> {
                 height: 350,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     image: NetworkImage(
                       widget.post.postImages ??
                           "https://image.freepik.com/free-vector/404-error-page-found_41910-364.jpg",
@@ -118,12 +130,23 @@ class _PostWidgetState extends State<PostWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: IconButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          // print("before, $liked");
+                          if (!liked) {
+                            Like like = new Like(
+                                id: 2,
+                                postId: widget.post.id,
+                                userId: ownerId,
+                                postReaction: "like");
+                            bool isLiked = await PostService().createLike(like);
+                            print("like status is $isLiked");
+                          }
+
                           setState(() {
                             liked = !liked;
                           });
                         },
-                        icon: liked == true
+                        icon: liked
                             ? Icon(
                                 CupertinoIcons.heart_fill,
                                 size: 35,
