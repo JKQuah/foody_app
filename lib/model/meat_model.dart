@@ -19,6 +19,7 @@ class MeatModel {
   List<PreferenceModel> preferences;
   DateTime createdDate;
   DateTime lastModifiedDate;
+  double distanceInKm;
 
   MeatModel({
     this.id,
@@ -36,27 +37,36 @@ class MeatModel {
     this.preferences,
     this.createdDate,
     this.lastModifiedDate,
+    this.distanceInKm,
   });
 
   factory MeatModel.fromJson(Map<String, dynamic> json) {
     return MeatModel(
-      id: json['id'] as int,
-      imageUrl: json['imageUrl'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      maxParticipant: json['maxParticipant'] as int,
-      startTime: ConvertUtils.fromIsoStrToDateTime(json['startTime'] as String),
-      endTime: ConvertUtils.fromIsoStrToDateTime(json['endTime'] as String),
-      meatStatus: json['meatStatus'] as String,
-      userStatus: json['userStatus'] as String,
-      locationDTO: LocationDTO.fromJson(json['locationDTO']),
-      totalParticipants: json['totalParticipants'] as int,
-      role: json['role'] as String,
-      preferences: (json['preferences'] as List<dynamic>)
-        .map((dynamic item) => PreferenceModel.fromJson(item))
-        .toList(),
-      createdDate: ConvertUtils.fromIsoStrToDateTime(json['createdDate'] as String),
-      lastModifiedDate: ConvertUtils.fromIsoStrToDateTime(json['lastModifiedDate'] as String),
+        id: json['id'] as int,
+        imageUrl: json['imageUrl'] as String,
+        title: json['title'] as String,
+        description: json['description'] as String,
+        maxParticipant: json['maxParticipant'] as int,
+        startTime: ConvertUtils.fromIsoStrToDateTime(
+            json['startTime'] as String),
+        endTime: ConvertUtils.fromIsoStrToDateTime(json['endTime'] as String),
+        meatStatus: json['meatStatus'] as String,
+        userStatus: json['userStatus'] as String,
+        locationDTO: (json['locationDTO'] == null)
+            ? null
+            : LocationDTO.fromJson(json['locationDTO']),
+        totalParticipants: json['totalParticipants'] as int,
+        role: json['role'] as String,
+        preferences: (json['preferences'] == null)
+            ? null
+            : (json['preferences'] as List<dynamic>)
+            .map((dynamic item) => PreferenceModel.fromJson(item))
+            .toList(),
+        createdDate:
+        ConvertUtils.fromIsoStrToDateTime(json['createdDate'] as String),
+        lastModifiedDate:
+        ConvertUtils.fromIsoStrToDateTime(json['lastModifiedDate'] as String),
+        distanceInKm: ConvertUtils.fromNumberToDouble(json['distanceInKm'])
     );
   }
 
@@ -73,6 +83,4 @@ class MeatModel {
       'base64String': (imageUrl is String) ? imageUrl : null
     };
   }
-
-
 }
