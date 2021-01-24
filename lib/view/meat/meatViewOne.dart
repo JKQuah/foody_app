@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foody_app/model/meat_model.dart';
 import 'package:foody_app/model/preference_model.dart';
+import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/utils/convertUtils.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -76,7 +77,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
                             style: TextStyle(
                               fontSize: 40,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: AppColors.PRIMARY_COLOR,
                             ),
                           ),
                           Row(
@@ -99,7 +100,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.blueGrey,
+                                color: AppColors.ACCENT_COLOR,
                               ),
                             ),
                             Text(
@@ -120,7 +121,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.blueGrey,
+                                color: AppColors.ACCENT_COLOR,
                               ),
                             ),
                             Text(
@@ -140,7 +141,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w600,
-                              color: Colors.blueGrey,
+                              color: AppColors.ACCENT_COLOR,
                             ),
                           ),
                           SizedBox(
@@ -180,7 +181,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Colors.green),
+                              color: AppColors.ACCENT_COLOR),
                         ),
                         onPressed: () => {print("see participants")},
                       ),
@@ -236,7 +237,7 @@ class UpdateButton extends StatelessWidget {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
+        backgroundColor: MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
       ),
       onPressed: () async {
         // Navigator.push(context, route)
@@ -256,7 +257,7 @@ class CancelledText extends StatelessWidget {
           "Meat & Eat is Cancelled",
           style: TextStyle(
             fontSize: 22,
-            color: Colors.red,
+            color: AppColors.DANGER_COLOR,
             fontWeight: FontWeight.w600,
           ),
         )
@@ -281,18 +282,18 @@ class JoinButton extends StatelessWidget {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
+        backgroundColor: MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
       ),
       onPressed: () async {
         try {
           await MeatHTTPService.joinMeat(meatId);
           Scaffold.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.PRIMARY_COLOR,
               content: Text("Join Successfully")));
         } on Exception catch (_) {
           print("join meat HTTP fail");
           Scaffold.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.red, content: Text("Fail to join")));
+              backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to join")));
         }
       },
     );
@@ -315,18 +316,18 @@ class UnjoinButton extends StatelessWidget {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+        backgroundColor: MaterialStateProperty.all<Color>(AppColors.DANGER_COLOR),
       ),
       onPressed: () async {
         try {
           await MeatHTTPService.unjoinMeat(meatId);
           Scaffold.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.PRIMARY_COLOR,
               content: Text("Unjoin Successfully")));
         } on Exception catch (_) {
           print("unjoin meat HTTP fail");
           Scaffold.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.red, content: Text("Fail to unjoin")));
+              backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to unjoin")));
         }
       },
     );
