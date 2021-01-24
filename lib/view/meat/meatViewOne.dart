@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:foody_app/model/meat_model.dart';
+import 'package:foody_app/model/preference_model.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/utils/convertUtils.dart';
-import 'package:foody_app/view/meat/meatCreate.dart';
-import 'package:foody_app/widget/app_bar.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MeatViewOne extends StatefulWidget {
   MeatViewOne({Key key}) : super(key: key);
@@ -13,12 +15,16 @@ class MeatViewOne extends StatefulWidget {
 }
 
 class _MeatViewOneState extends State<MeatViewOne> {
-  Future<MeatModel> meatModel;
+  Future<MeatModel> futureMeatModel;
+  Completer<GoogleMapController> _controller = Completer();
 
   @override
   void didChangeDependencies() async {
-    meatModel = MeatHTTPService.getOneMeat(43);
-    print((await meatModel).toJson());
+    futureMeatModel = MeatHTTPService.getOneMeat(43);
+    MeatModel meatModel = (await futureMeatModel);
+
+    print(meatModel.toJson());
+
     super.didChangeDependencies();
   }
 
@@ -46,85 +52,150 @@ class _MeatViewOneState extends State<MeatViewOne> {
         ),
       ),
       body: FutureBuilder<MeatModel>(
-        future: meatModel,
+        future: futureMeatModel,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            MeatModel snapshotMeat = snapshot.data;
             return Scaffold(
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Image.network("https://source.unsplash.com/user/erondu",
-                      fit: BoxFit.fitWidth),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          snapshot.data.title,
-                          style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                        Text(
-                          snapshot.data.description,
-                          style: TextStyle(
-                              fontSize: 20, fontStyle: FontStyle.italic),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(children: [
-                          Text(
-                            "Begin at: ",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.blueGrey,
-                            ),
-                          ),
-                          Text(
-                            ConvertUtils.formDateTimeToStr(
-                                snapshot.data.startTime),
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ]),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(children: [
-                          Text(
-                            "End at: ",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.blueGrey,
-                            ),
-                          ),
-                          Text(
-                            ConvertUtils.formDateTimeToStr(
-                                snapshot.data.endTime),
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ]),
-                      ],
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Image.network("https://source.unsplash.com/user/erondu",
+                        fit: BoxFit.fitWidth),
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            snapshot.data.title,
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                          Row(
+                            children: snapshot.data.preferences
+                                .map((PreferenceModel preference) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: Chip(
+                                        label: Text(preference.name),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(children: [
+                            Text(
+                              "Begin at: ",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blueGrey,
+                              ),
+                            ),
+                            Text(
+                              ConvertUtils.formDateTimeToStr(
+                                  snapshot.data.startTime),
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(children: [
+                            Text(
+                              "End at: ",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blueGrey,
+                              ),
+                            ),
+                            Text(
+                              ConvertUtils.formDateTimeToStr(
+                                  snapshot.data.endTime),
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Location: ",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blueGrey,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 300,
+                            child: GoogleMap(
+                              onMapCreated: (GoogleMapController controller) {
+                                _controller.complete(controller);
+                              },
+                              markers: {
+                                Marker(
+                                    markerId: MarkerId(DateTime.now().microsecondsSinceEpoch.toString()),
+                                    position: LatLng(
+                                        snapshotMeat.locationDTO.latitude,
+                                        snapshotMeat.locationDTO.longitude),
+                                    infoWindow: InfoWindow(
+                                        title: snapshotMeat
+                                            .locationDTO.locationName))
+                              },
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(
+                                    snapshotMeat.locationDTO.latitude,
+                                    snapshotMeat.locationDTO.longitude),
+                                zoom: 24.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      child: FlatButton.icon(
+                        icon: Icon(Icons.supervised_user_circle),
+                        label: Text(
+                          "See Participants",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green),
+                        ),
+                        onPressed: () => {print("see participants")},
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        snapshot.data.description,
+                        style: TextStyle(
+                            fontSize: 20, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               bottomNavigationBar: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),

@@ -21,8 +21,8 @@ class _MeatViewAllState extends State<MeatViewAll> {
           onPressed: () {
             Navigator.push(
               context,
-              // MaterialPageRoute(builder: (context) => MeatViewOne()),
-              MaterialPageRoute(builder: (context) => MeatCreate()),
+              MaterialPageRoute(builder: (context) => MeatViewOne()),
+              // MaterialPageRoute(builder: (context) => MeatCreate()),
             );
           },
           icon: Icon(Icons.alternate_email),
