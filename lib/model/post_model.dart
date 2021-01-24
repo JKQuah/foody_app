@@ -1,3 +1,4 @@
+import 'package:foody_app/model/locationDTO.dart';
 import 'package:foody_app/utils/convertUtils.dart';
 
 class PostModel {
@@ -5,7 +6,7 @@ class PostModel {
   int userId;
   String username;
   String postImages;
-  String location;
+  LocationDTO location;
   String caption;
   double services;
   double cleanliness;
@@ -31,6 +32,9 @@ class PostModel {
       userId: json['user_id'] as int,
       username: json['username'] as String,
       postImages: json['media_link'] as String,
+      location: json['locationDTO'] == null
+          ? null
+          : LocationDTO.fromJson(json['locationDTO']),
       caption: json['description'] as String,
       services: ConvertUtils.convertInttoDouble(json['services']),
       cleanliness: ConvertUtils.convertInttoDouble(json['cleanliness']),
@@ -44,6 +48,7 @@ class PostModel {
       "id": id,
       "user_id": userId,
       "images": ConvertUtils.convertStringToBase64String(postImages),
+      "location": location.toJson(),
       "description": caption,
       "services": services,
       "cleanliness": cleanliness,
