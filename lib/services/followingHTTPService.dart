@@ -30,7 +30,6 @@ class FollowingHTTPService {
     };
     String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl = endpointUrl + "?" + queryString;
-
     Map<String, String> headers = await HTTPUtils.getHeaders();
     Response res = await get(requestUrl, headers: headers);
     if(res.statusCode == 200) {

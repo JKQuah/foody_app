@@ -58,7 +58,6 @@ class _FindFriendViewState extends State<FindFriendView> {
             child: new TextField(
               onChanged: (value) {
                 searchUser(value);
-
               },
               decoration: InputDecoration(
                 suffixIcon: Icon(Icons.search, color: Colors.black54,),
@@ -96,7 +95,8 @@ class _FindFriendViewState extends State<FindFriendView> {
                                       shape: BoxShape.circle,
                                       image: new DecorationImage(
                                           fit: BoxFit.contain,
-                                          image: new NetworkImage('${snapshot.data[index].imageUrl}')
+                                          image: new NetworkImage(snapshot.data[index].imageUrl ??
+                                          "https://thumbs.dreamstime.com/b/default-avatar-photo-placeholder-profile-picture-default-avatar-photo-placeholder-profile-picture-eps-file-easy-to-edit-125707135.jpg")
                                       )
                                   )
                               )
@@ -106,7 +106,7 @@ class _FindFriendViewState extends State<FindFriendView> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ProfileView()),
+                                  MaterialPageRoute(builder: (context) => ProfileView(user: snapshot.data[index])),
                                 );
                               },
                               icon: Icon(Icons.chevron_right)
@@ -118,16 +118,7 @@ class _FindFriendViewState extends State<FindFriendView> {
                   return Container();
                 }
               }
-
             )
-
-
-
-
-
-
-
-
           )
         ],
       )
