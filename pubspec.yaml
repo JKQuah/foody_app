@@ -25,6 +25,7 @@ dependencies:
   http: ^0.12.2
   shared_preferences: ^0.5.12+4
   flutter_chips_input: ^1.9.5
+  image_picker: ^0.6.7+21
   flutter:
     sdk: flutter
 
