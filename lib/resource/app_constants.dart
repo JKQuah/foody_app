@@ -2,6 +2,7 @@
 
 class AppConstants {
   static const String APP_NAME = 'Foody App';
+  static const String APP_BASE_URL = "http://192.168.8.119:3000";
 
   /*------------------------------AUTH----------------------------------------*/
   static const String EMAIL_LABEL = "Email Address";
