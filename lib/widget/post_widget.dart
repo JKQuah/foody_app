@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:foody_app/model/post_model.dart';
+import 'package:foody_app/services/userService.dart';
+import 'package:foody_app/view/commentView.dart';
 
 import '../resource/app_colors.dart';
 
 class PostWidget extends StatefulWidget {
   final PostModel post;
-  final Function like;
-  final Function comment;
+  // final Function like;
+  // final Function comment;
 
-  const PostWidget({Key key, this.post, this.comment, this.like})
-      : super(key: key);
+  const PostWidget({Key key, this.post}) : super(key: key);
 
   @override
   _PostWidgetState createState() => _PostWidgetState();
@@ -18,6 +20,33 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
   bool liked = false;
+  double averageScore = 0.0;
+  dynamic ownerId = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    averageScore = (widget.post.services +
+            widget.post.taste +
+            widget.post.cleanliness +
+            widget.post.price) /
+        4;
+    getOwnerId();
+  }
+
+  void getOwnerId() async {
+    dynamic user = await UserService().getSelfId();
+    ownerId = user['id'];
+  }
+
+  void openCommentView(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return CommentView(postId: widget.post.id, ownerId: ownerId);
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +71,9 @@ class _PostWidgetState extends State<PostWidget> {
               // ),
             ),
             title: Text(
-              widget.post.username,
+              widget.post.username ?? "No Username",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20.0,
                 fontWeight: FontWeight.bold,
                 color: AppColors.TEXT_COLOR,
               ),
@@ -69,9 +98,9 @@ class _PostWidgetState extends State<PostWidget> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.fill,
-
                     image: NetworkImage(
-                      "https://64.media.tumblr.com/9c54cf83b096e7b31bff2a444eb0a979/17f389f91054af1f-45/s1280x1920/233b6a8342eb701279ac787936268f747b96dc3f.png",
+                      widget.post.postImages ??
+                          "https://image.freepik.com/free-vector/404-error-page-found_41910-364.jpg",
                     ),
                     // Image.asset(
                     //   post.postImages ?? 'assets/app_logo.png',
@@ -113,7 +142,9 @@ class _PostWidgetState extends State<PostWidget> {
                           CupertinoIcons.chat_bubble_text,
                           size: 35,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          openCommentView(context);
+                        },
                       ),
                     ),
                   ],
@@ -128,16 +159,22 @@ class _PostWidgetState extends State<PostWidget> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Icon(Icons.star_rate),
+                child: RatingBarIndicator(
+                  rating: averageScore,
+                  direction: Axis.horizontal,
+                  itemCount: 5,
+                  itemSize: 30.0,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                ),
               ),
-              Icon(Icons.star_rate),
-              Icon(Icons.star_rate),
-              Icon(Icons.star_rate),
-              Icon(Icons.star_rate),
               SizedBox(width: 10),
               Center(
                 child: Text(
-                  widget.post.services ?? '-',
+                  averageScore.toStringAsFixed(2).toString() ?? '-',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0,
@@ -152,48 +189,11 @@ class _PostWidgetState extends State<PostWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.sentiment_satisfied_alt),
-                  SizedBox(width: 5),
-                  Text(
-                    widget.post.services ?? '-',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                      color: AppColors.PRIMARY_COLOR,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.cleaning_services),
-                  SizedBox(width: 5),
-                  Text(
-                    widget.post.cleanliness ?? '-',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                      color: AppColors.PRIMARY_COLOR,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.restaurant),
-                  SizedBox(width: 5),
-                  Text(
-                    widget.post.taste ?? '-',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                      color: AppColors.PRIMARY_COLOR,
-                    ),
-                  ),
-                ],
-              ),
+              _ratingWidget(
+                  Icons.sentiment_satisfied_alt, widget.post.services),
+              _ratingWidget(Icons.cleaning_services, widget.post.cleanliness),
+              _ratingWidget(Icons.restaurant, widget.post.taste),
+              _ratingWidget(Icons.attach_money, widget.post.price),
             ],
           ),
           SizedBox(height: 10),
@@ -201,12 +201,12 @@ class _PostWidgetState extends State<PostWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 12.0),
+                padding: const EdgeInsets.only(left: 16.0, bottom: 4.0),
                 child: Text(
-                  widget.post.username,
+                  widget.post.username ?? "No Username",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
+                    fontSize: 18.0,
                   ),
                 ),
               ),
@@ -217,10 +217,9 @@ class _PostWidgetState extends State<PostWidget> {
             children: [
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
+                  padding: const EdgeInsets.only(left: 16.0),
                   child: Text(
-                    widget.post.caption ??
-                        'Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumpsumLorem ipsum',
+                    widget.post.caption ?? '',
                     style: TextStyle(
                       fontSize: 16.0,
                     ),
@@ -232,7 +231,9 @@ class _PostWidgetState extends State<PostWidget> {
             ],
           ),
           FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              openCommentView(context);
+            },
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -252,6 +253,27 @@ class _PostWidgetState extends State<PostWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  _ratingWidget(IconData icon, double score) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          size: 22.0,
+        ),
+        SizedBox(width: 5),
+        Text(
+          score.toString() ?? '-',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22.0,
+            color: AppColors.PRIMARY_COLOR,
+          ),
+        ),
+      ],
     );
   }
 }

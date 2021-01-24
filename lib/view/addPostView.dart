@@ -1,7 +1,12 @@
+// import 'dart:html';
 import 'dart:io';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:foody_app/model/post_model.dart';
 import 'package:foody_app/resource/app_colors.dart';
+import 'package:foody_app/services/postService.dart';
+import 'package:foody_app/view/homeView.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -17,9 +22,10 @@ class _AddPostViewState extends State<AddPostView> {
   PostModel _newpost = new PostModel();
 
   bool _loading;
-  PickedFile file;
+  File _file;
   final _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -30,6 +36,7 @@ class _AddPostViewState extends State<AddPostView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
@@ -57,7 +64,10 @@ class _AddPostViewState extends State<AddPostView> {
             Form(
               key: _formKey,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    right: 20.0,
+                    left: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -66,17 +76,31 @@ class _AddPostViewState extends State<AddPostView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          CircleAvatar(
-                            // backgroundImage: ImageProvider('assets/lfoo.oobgb'),
-                            radius: 34,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: _file != null
+                                ? Image.file(
+                                    _file,
+                                    width: 75,
+                                    height: 75,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
+                                    width: 75,
+                                    height: 75,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.grey[800],
+                                    ),
+                                  ),
                           ),
-                          Column(
-                            children: [
-                              FlatButton(
-                                child: Text("Add Photo"),
-                                onPressed: () => {_selectImage(context)},
-                              )
-                            ],
+                          FlatButton(
+                            child: Text("Add Photo"),
+                            onPressed: () => {_selectImage(context)},
                           ),
                         ],
                       ),
@@ -92,10 +116,28 @@ class _AddPostViewState extends State<AddPostView> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Any comment on the food?';
+                        } else {
+                          setState(() {
+                            _newpost.caption = value;
+                          });
                         }
                         return null;
                       },
+                      // onTap: () async {
+                      //   Position position = await Geolocator.getCurrentPosition(
+                      //       desiredAccuracy: LocationAccuracy.high);
+                      //   print(position);
+                      // },
                     ),
+                    // ElevatedButton(
+                    //   onPressed: () async {
+                    //     Position position = await Geolocator.getCurrentPosition(
+                    //         desiredAccuracy: LocationAccuracy.high);
+                    //     print(position);
+                    //     // print(_determinePosition);
+                    //   },
+                    //   child: Text("Testing"),
+                    // ),
                     SizedBox(height: 15.0),
                     TextFormField(
                       decoration: const InputDecoration(
@@ -136,7 +178,7 @@ class _AddPostViewState extends State<AddPostView> {
                     ),
                     _ratingCollapsed(
                       Icon(Icons.restaurant),
-                      "Taste",
+                      "Food",
                       _newpost.taste,
                     ),
                     _ratingCollapsed(
@@ -152,6 +194,14 @@ class _AddPostViewState extends State<AddPostView> {
                             setState(() {
                               _loading = true;
                             });
+                            if (validateRating()) {
+                              addPost(_newpost);
+                            } else {
+                              print('error');
+                              setState(() {
+                                _loading = false;
+                              });
+                            }
                           }
                         },
                         child: Text(
@@ -170,6 +220,7 @@ class _AddPostViewState extends State<AddPostView> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 15.0),
                   ],
                 ),
               ),
@@ -187,7 +238,7 @@ class _AddPostViewState extends State<AddPostView> {
 
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: const Text('Create a Post'),
+          title: const Text('Add a Photo'),
           children: <Widget>[
             SimpleDialogOption(
                 child: const Text('Take a photo'),
@@ -199,7 +250,13 @@ class _AddPostViewState extends State<AddPostView> {
                       maxHeight: 1080,
                       imageQuality: 80);
                   setState(() {
-                    file = imageFile;
+                    if (imageFile != null) {
+                      _file = File(imageFile.path);
+                      List<int> imageBytes = _file.readAsBytesSync();
+                      _newpost.postImages = base64Encode(imageBytes);
+                    } else {
+                      print('No image selected.');
+                    }
                   });
                 }),
             SimpleDialogOption(
@@ -207,12 +264,18 @@ class _AddPostViewState extends State<AddPostView> {
                 onPressed: () async {
                   Navigator.of(context).pop();
                   PickedFile imageFile = await _picker.getImage(
-                      source: ImageSource.camera,
+                      source: ImageSource.gallery,
                       maxWidth: 1080,
                       maxHeight: 1080,
                       imageQuality: 80);
                   setState(() {
-                    file = imageFile;
+                    if (imageFile != null) {
+                      _file = File(imageFile.path);
+                      List<int> imageBytes = _file.readAsBytesSync();
+                      _newpost.postImages = base64Encode(imageBytes);
+                    } else {
+                      print('No image selected.');
+                    }
                   });
                 }),
             SimpleDialogOption(
@@ -234,7 +297,7 @@ class _AddPostViewState extends State<AddPostView> {
         title: Text(title,
             style: TextStyle(
               // fontWeight: FontWeight.bold,
-              fontSize: 20,
+              fontSize: 18,
             )),
         trailing: score == null ? Text("") : Text(score.toString()),
       ),
@@ -259,7 +322,7 @@ class _AddPostViewState extends State<AddPostView> {
                 case "Cleanliness":
                   _newpost.cleanliness = rating;
                   break;
-                case "Taste":
+                case "Food":
                   _newpost.taste = rating;
                   break;
                 case "Price":
@@ -273,5 +336,48 @@ class _AddPostViewState extends State<AddPostView> {
         ),
       ),
     );
+  }
+
+  addPost(PostModel newPost) async {
+    // ScrollController().animateTo(0.0,
+    //     duration: Duration(milliseconds: 500), curve: Curves.ease);
+    bool isPosted = await PostService().createPost(newPost);
+    if (isPosted) {
+      Navigator.pop(context, MaterialPageRoute(
+        builder: (BuildContext context) {
+          return HomeView();
+        },
+      ));
+    } else {}
+  }
+
+  bool validateRating() {
+    if (_newpost.services == null) {
+      displaySnackBar("service");
+      return false;
+    } else if (_newpost.cleanliness == null) {
+      displaySnackBar("cleanliness");
+      return false;
+    } else if (_newpost.taste == null) {
+      displaySnackBar("food");
+      return false;
+    } else if (_newpost.price == null) {
+      displaySnackBar("price");
+      return false;
+    }
+    return true;
+  }
+
+  void displaySnackBar(String variable) {
+    // Find the Scaffold in the widget tree and use it to show a SnackBar.
+    // ignore: deprecated_member_use
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        'Please rating their ' + variable,
+        style: TextStyle(fontSize: 16.0),
+      ),
+      duration: Duration(seconds: 2),
+      backgroundColor: AppColors.DANGER_COLOR,
+    ));
   }
 }
