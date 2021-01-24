@@ -11,7 +11,8 @@ class MeatModel {
   int maxParticipant;
   DateTime startTime;
   DateTime endTime;
-  String status;
+  String meatStatus;
+  String userStatus;
   LocationDTO locationDTO;
   int totalParticipants;
   String role;
@@ -27,7 +28,8 @@ class MeatModel {
     this.maxParticipant,
     this.startTime,
     this.endTime,
-    this.status,
+    this.meatStatus,
+    this.userStatus,
     this.locationDTO,
     this.totalParticipants,
     this.role,
@@ -45,7 +47,8 @@ class MeatModel {
       maxParticipant: json['maxParticipant'] as int,
       startTime: ConvertUtils.fromIsoStrToDateTime(json['startTime'] as String),
       endTime: ConvertUtils.fromIsoStrToDateTime(json['endTime'] as String),
-      status: json['status'] as String,
+      meatStatus: json['meatStatus'] as String,
+      userStatus: json['userStatus'] as String,
       locationDTO: LocationDTO.fromJson(json['locationDTO']),
       totalParticipants: json['totalParticipants'] as int,
       role: json['role'] as String,

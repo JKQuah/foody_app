@@ -199,7 +199,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
               ),
               bottomNavigationBar: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: buttonFactory(),
+                child: buttonFactory(snapshotMeat),
               ),
             );
           } else if (snapshot.hasError) {
@@ -212,11 +212,11 @@ class _MeatViewOneState extends State<MeatViewOne> {
     );
   }
 
-  Widget buttonFactory() {
-    if (true) return CancelledText();
-    if (true) return UpdateButton(49);
-    if (true) return UnjoinButton(49);
-    if (true) return JoinButton(49);
+  Widget buttonFactory(MeatModel meatModel) {
+    if (meatModel.meatStatus == "cancelled") return CancelledText();
+    if (meatModel.role == "organiser") return UpdateButton(meatModel.id);
+    if (meatModel.userStatus == "going") return UnjoinButton(meatModel.id);
+    return JoinButton(meatModel.id);
   }
 }
 
