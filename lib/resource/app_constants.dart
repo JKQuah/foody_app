@@ -3,6 +3,7 @@
 class AppConstants {
   static const String APP_NAME = 'Foody App';
   static const baseURL = "http://192.168.0.102:3000";
+  static const googleApiKey = "AIzaSyDhbQKpuMh6m18t1RETNkVFNIcyyy-w3fQ";
 
   /*------------------------------AUTH----------------------------------------*/
   static const String EMAIL_LABEL = "Email Address";

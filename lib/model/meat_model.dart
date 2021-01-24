@@ -66,8 +66,8 @@ class MeatModel {
       'startTime': startTime.toIso8601String(),
       'endTime': endTime.toIso8601String(),
       'preferenceIds': preferences.map((PreferenceModel p) => p.id).toList(),
-      // location DTO
-      // image
+      'locationDTO': locationDTO.toJson(),
+      'base64String': (imageUrl is String) ? imageUrl : null
     };
   }
 
