@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:foody_app/model/meat_model.dart';
+import 'package:foody_app/model/preference_model.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
+import 'package:foody_app/services/preferenceHTTPService.dart';
 import 'package:foody_app/utils/convertUtils.dart';
 import 'package:foody_app/utils/validatorUtils.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +19,10 @@ class MeatCreate extends StatefulWidget {
 
 class _MeatCreateState extends State<MeatCreate> {
   final _formKey = GlobalKey<FormState>();
-  MeatModel meatModel = MeatModel();
+  Future<List<PreferenceModel>> preferenceList;
+  Future<MeatModel> meatModel;
+  bool _startTimeError = false;
+  bool _endTimeError = false;
 
   final TextEditingController titleCtl = TextEditingController();
   final TextEditingController descriptionCtl = TextEditingController();
@@ -28,15 +34,17 @@ class _MeatCreateState extends State<MeatCreate> {
 
   @override
   void didChangeDependencies() async {
-    meatModel = await MeatHTTPService.getOneMeat(43);
-    print(meatModel.toJson());
-    titleCtl.text = meatModel.title;
-    descriptionCtl.text = meatModel.description;
-    startDateCtl.text = ConvertUtils.fromDateTimeToDateStr(meatModel.startTime);
-    startTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(meatModel.startTime);
-    endDateCtl.text = ConvertUtils.fromDateTimeToDateStr(meatModel.endTime);
-    endTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(meatModel.endTime);
-    maxParticipantCtl.text = meatModel.maxParticipant.toString();
+    preferenceList = PreferenceHTTPService.getPreferences();
+    meatModel = MeatHTTPService.getOneMeat(43);
+    MeatModel model = await meatModel;
+    print(model.toJson());
+    titleCtl.text = model.title;
+    descriptionCtl.text = model.description;
+    startDateCtl.text = ConvertUtils.fromDateTimeToDateStr(model.startTime);
+    startTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(model.startTime);
+    endDateCtl.text = ConvertUtils.fromDateTimeToDateStr(model.endTime);
+    endTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(model.endTime);
+    maxParticipantCtl.text = model.maxParticipant.toString();
     super.didChangeDependencies();
   }
 
@@ -64,215 +72,325 @@ class _MeatCreateState extends State<MeatCreate> {
             ),
           ),
         ),
-        body: Builder(
-            builder: (context) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      TextFormField(
-                        controller: titleCtl,
-                        decoration: InputDecoration(labelText: 'Title *'),
-                        validator: requiredValidation,
-                        onSaved: (val) => setState(() => meatModel.title = val),
+        body: FutureBuilder<List<dynamic>>(
+          future: Future.wait([preferenceList, meatModel]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.hasData) {
+              List<PreferenceModel> snapshotPreferences =
+                  snapshot.data[0] as List<PreferenceModel>;
+              MeatModel snapshotMeat = snapshot.data[1] as MeatModel;
+              return SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        right: 20,
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        controller: descriptionCtl,
-                        decoration: InputDecoration(labelText: 'Description'),
-                        onSaved: (val) =>
-                            setState(() => meatModel.description = val),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                  decoration: InputDecoration(
-                                      labelText: 'Start Date *'),
-                                  controller: startDateCtl,
-                                  validator: requiredValidation,
-                                  onTap: () async {
-                                    // Below line stops keyboard from appearing
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          TextFormField(
+                            controller: titleCtl,
+                            decoration: InputDecoration(labelText: 'Title *'),
+                            validator: requiredValidation,
+                            onSaved: (val) =>
+                                setState(() => snapshotMeat.title = val),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            controller: descriptionCtl,
+                            decoration:
+                                InputDecoration(labelText: 'Description'),
+                            onSaved: (val) =>
+                                setState(() => snapshotMeat.description = val),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Start Date *',
+                                        errorText: _startTimeError
+                                            ? 'this must be later than now'
+                                            : null,
+                                      ),
+                                      controller: startDateCtl,
+                                      validator: requiredValidation,
+                                      onTap: () async {
+                                        // Below line stops keyboard from appearing
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
 
-                                    // Show Date Picker Here
-                                    DateTime date = await showDatePicker(
-                                        context: context,
-                                        initialDate: meatModel.startTime,
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(2100));
+                                        // Show Date Picker Here
+                                        DateTime date = await showDatePicker(
+                                            context: context,
+                                            initialDate: snapshotMeat.startTime,
+                                            firstDate: DateTime.now(),
+                                            lastDate: DateTime(2100));
 
-                                    startDateCtl.text =
-                                        ConvertUtils.fromDateTimeToDateStr(date);
+                                        startDateCtl.text =
+                                            ConvertUtils.fromDateTimeToDateStr(
+                                                date);
 
-                                    setState(() {
-                                      meatModel.startTime = new DateTime(
-                                          date.year,
-                                          date.month,
-                                          date.day,
-                                          meatModel.startTime.hour,
-                                          meatModel.startTime.minute);
-                                    });
-                                  }),
+                                        DateTime newDateTime = new DateTime(
+                                            date.year,
+                                            date.month,
+                                            date.day,
+                                            snapshotMeat.startTime.hour,
+                                            snapshotMeat.startTime.minute);
+                                        setState(() {
+                                          snapshotMeat.startTime = newDateTime;
+                                          _startTimeError = DateTime.now()
+                                              .isAfter(newDateTime);
+                                          _endTimeError = newDateTime
+                                              .isAfter(snapshotMeat.endTime);
+                                        });
+                                      }),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Start Time *',
+                                        errorText: _startTimeError
+                                            ? 'this must be later than now'
+                                            : null,
+                                      ),
+                                      controller: startTimeCtl,
+                                      validator: requiredValidation,
+                                      onTap: () async {
+                                        // Below line stops keyboard from appearing
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+
+                                        // Show Date Picker Here
+                                        TimeOfDay timeOfDay =
+                                            await showTimePicker(
+                                                context: context,
+                                                initialTime:
+                                                    TimeOfDay.fromDateTime(
+                                                        snapshotMeat
+                                                            .startTime));
+
+                                        startTimeCtl.text =
+                                            timeOfDay.format(context);
+                                        DateTime newDateTime = new DateTime(
+                                            snapshotMeat.startTime.year,
+                                            snapshotMeat.startTime.month,
+                                            snapshotMeat.startTime.day,
+                                            timeOfDay.hour,
+                                            timeOfDay.minute);
+                                        setState(() {
+                                          snapshotMeat.startTime = newDateTime;
+                                          _startTimeError = DateTime.now()
+                                              .isAfter(newDateTime);
+                                          _endTimeError = newDateTime
+                                              .isAfter(snapshotMeat.endTime);
+                                        });
+                                      }),
+                                )
+                              ]),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                    child: TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'End Date *',
+                                          errorText: _endTimeError
+                                              ? 'End Date must be later than Start Date'
+                                              : null,
+                                        ),
+                                        controller: endDateCtl,
+                                        validator: requiredValidation,
+                                        onTap: () async {
+                                          // Below line stops keyboard from appearing
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+
+                                          // Show Date Picker Here
+                                          DateTime date = await showDatePicker(
+                                              context: context,
+                                              initialDate: snapshotMeat.endTime,
+                                              firstDate: DateTime.now(),
+                                              lastDate: DateTime(2100));
+
+                                          endDateCtl.text =
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(date);
+
+                                          DateTime newDateTime = new DateTime(
+                                              date.year,
+                                              date.month,
+                                              date.day,
+                                              snapshotMeat.endTime.hour,
+                                              snapshotMeat.endTime.minute);
+                                          setState(() {
+                                            snapshotMeat.endTime = newDateTime;
+                                            _endTimeError =
+                                                snapshotMeat.startTime !=
+                                                        null &&
+                                                    snapshotMeat.startTime
+                                                        .isAfter(newDateTime);
+                                          });
+                                        })),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'End Time *',
+                                        errorText: _endTimeError
+                                            ? 'End Date must be later than Start Date'
+                                            : null,
+                                      ),
+                                      controller: endTimeCtl,
+                                      validator: requiredValidation,
+                                      onTap: () async {
+                                        // Below line stops keyboard from appearing
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+
+                                        // Show Date Picker Here
+                                        TimeOfDay timeOfDay =
+                                            await showTimePicker(
+                                                context: context,
+                                                initialTime:
+                                                    TimeOfDay.fromDateTime(
+                                                        snapshotMeat.endTime));
+
+                                        endTimeCtl.text =
+                                            timeOfDay.format(context);
+
+                                        DateTime newDateTime = new DateTime(
+                                            snapshotMeat.endTime.year,
+                                            snapshotMeat.endTime.month,
+                                            snapshotMeat.endTime.day,
+                                            timeOfDay.hour,
+                                            timeOfDay.minute);
+                                        setState(() {
+                                          snapshotMeat.endTime = newDateTime;
+                                          _endTimeError =
+                                              snapshotMeat.startTime != null &&
+                                                  snapshotMeat.startTime
+                                                      .isAfter(newDateTime);
+                                        });
+                                      }),
+                                )
+                              ]),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            controller: maxParticipantCtl,
+                            decoration:
+                                InputDecoration(labelText: 'Max Participant *'),
+                            keyboardType: TextInputType.number,
+                            validator: maxParticipantValidation,
+                            onSaved: (val) => setState(() =>
+                                snapshotMeat.maxParticipant = int.parse(val)),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ChipsInput(
+                            initialValue: snapshotMeat.preferences,
+                            decoration: InputDecoration(
+                              labelText: "Preferences",
                             ),
-                            SizedBox(
-                              width: 20,
+                            maxChips: 3,
+                            findSuggestions: (String query) {
+                              if (query.length != 0) {
+                                var lowercaseQuery = query.toLowerCase();
+                                return snapshotPreferences.where((preference) {
+                                  return preference.name
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase());
+                                }).toList(growable: false)
+                                  ..sort((a, b) => a.name
+                                      .toLowerCase()
+                                      .indexOf(lowercaseQuery)
+                                      .compareTo(b.name
+                                          .toLowerCase()
+                                          .indexOf(lowercaseQuery)));
+                              } else {
+                                return const [];
+                              }
+                            },
+                            onChanged: (data) {
+                              setState(() {
+                                snapshotMeat.preferences =
+                                    data.cast<PreferenceModel>();
+                              });
+                            },
+                            chipBuilder: (context, state, preference) {
+                              return InputChip(
+                                key: ObjectKey(preference),
+                                label: Text(preference.name),
+                                onDeleted: () => state.deleteChip(preference),
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              );
+                            },
+                            suggestionBuilder: (context, state, profile) {
+                              return ListTile(
+                                key: ObjectKey(profile),
+                                title: Text(profile.name),
+                                onTap: () => state.selectSuggestion(profile),
+                              );
+                            },
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(labelText: 'Image *'),
+                            validator: requiredValidation,
+                            onSaved: (val) =>
+                                setState(() => snapshotMeat.imageUrl = val),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            decoration:
+                                InputDecoration(labelText: 'Location *'),
+                            validator: requiredValidation,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () =>
+                                  handleSubmit(context, snapshotMeat),
+                              child: Text('Create'),
                             ),
-                            Expanded(
-                              child: TextFormField(
-                                  decoration: InputDecoration(
-                                      labelText: 'Start Time *'),
-                                  controller: startTimeCtl,
-                                  validator: requiredValidation,
-                                  onTap: () async {
-                                    // Below line stops keyboard from appearing
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-
-                                    // Show Date Picker Here
-                                    TimeOfDay timeOfDay = await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.fromDateTime(
-                                            meatModel.startTime));
-
-                                    startTimeCtl.text =
-                                        timeOfDay.format(context);
-
-                                    setState(() {
-                                      meatModel.startTime = new DateTime(
-                                          meatModel.startTime.year,
-                                          meatModel.startTime.month,
-                                          meatModel.startTime.day,
-                                          timeOfDay.hour,
-                                          timeOfDay.minute);
-                                    });
-                                  }),
-                            )
-                          ]),
-                      SizedBox(
-                        height: 20,
+                          ),
+                        ],
                       ),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                  decoration:
-                                      InputDecoration(labelText: 'End Date *'),
-                                  controller: endDateCtl,
-                                  validator: requiredValidation,
-                                  onTap: () async {
-                                    // Below line stops keyboard from appearing
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-
-                                    // Show Date Picker Here
-                                    DateTime date = await showDatePicker(
-                                        context: context,
-                                        initialDate: meatModel.endTime,
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(2100));
-
-                                    endDateCtl.text =
-                                        DateFormat('yyyy-MM-dd').format(date);
-
-                                    setState(() {
-                                      meatModel.endTime = new DateTime(
-                                          date.year,
-                                          date.month,
-                                          date.day,
-                                          meatModel.endTime.hour,
-                                          meatModel.endTime.minute);
-                                    });
-                                  }),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                  decoration:
-                                      InputDecoration(labelText: 'End Time *'),
-                                  controller: endTimeCtl,
-                                  validator: requiredValidation,
-                                  onTap: () async {
-                                    // Below line stops keyboard from appearing
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-
-                                    // Show Date Picker Here
-                                    TimeOfDay timeOfDay = await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.fromDateTime(
-                                            meatModel.endTime));
-
-                                    endTimeCtl.text = timeOfDay.format(context);
-
-                                    setState(() {
-                                      meatModel.endTime = new DateTime(
-                                          meatModel.endTime.year,
-                                          meatModel.endTime.month,
-                                          meatModel.endTime.day,
-                                          timeOfDay.hour,
-                                          timeOfDay.minute);
-                                    });
-                                  }),
-                            )
-                          ]),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        controller: maxParticipantCtl,
-                        decoration:
-                            InputDecoration(labelText: 'Max Participant *'),
-                        keyboardType: TextInputType.number,
-                        validator: maxParticipantValidation,
-                        onSaved: (val) => setState(
-                            () => meatModel.maxParticipant = int.parse(val)),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-
-                      TextFormField(
-                        decoration: InputDecoration(labelText: 'Image *'),
-                        validator: requiredValidation,
-                        onSaved: (val) =>
-                            setState(() => meatModel.imageUrl = val),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(labelText: 'Location *'),
-                        validator: requiredValidation,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () => handleSubmit(context),
-                          child: Text('Create'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ))));
+                    ),
+                  ));
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            return CircularProgressIndicator();
+          },
+        ));
   }
-
 
   String requiredValidation(value) {
     if (ValidatorUtils.isEmpty(value)) {
@@ -294,21 +412,21 @@ class _MeatCreateState extends State<MeatCreate> {
     return null;
   }
 
-  void handleSubmit(BuildContext context) async{
+  void handleSubmit(BuildContext context, MeatModel meatModel) async {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
       try {
+        print(meatModel.toJson());
         await MeatHTTPService.updateMeat(meatModel);
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(backgroundColor: Colors.green ,content: Text("Update Successfully")));
+        Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("Update Successfully")));
       } on Exception catch (_) {
         print("update meat HTTP fail");
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(backgroundColor: Colors.red ,content: Text("Fail to update")));
+        Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red, content: Text("Fail to update")));
       }
     }
   }
-
-
 }

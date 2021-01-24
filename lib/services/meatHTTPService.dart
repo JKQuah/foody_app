@@ -28,8 +28,6 @@ class MeatHTTPService {
     String requestUrl = meatURL;
     Map<String, String> headers = await HTTPUtils.getHeaders();
     headers["Content-Type"] = 'application/json; charset=UTF-8';
-    meatModel.preferences = [];
-    print(meatModel.toJson());
     Response res = await put(requestUrl,
         headers: headers, body: jsonEncode(meatModel.toJson()));
     print(res.statusCode);
