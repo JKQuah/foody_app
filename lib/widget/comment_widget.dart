@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:foody_app/model/comment.dart';
 import 'package:foody_app/resource/app_colors.dart';
@@ -51,7 +53,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   });
                 },
               )
-            : Container(),
+            : Text(""),
       ),
     );
   }

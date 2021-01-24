@@ -83,6 +83,7 @@ class _CommentViewState extends State<CommentView> {
             itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
               final item = snapshot.data[index];
+              print(item);
               return CommentWidget(comment: item, ownerId: ownerId);
             },
           );

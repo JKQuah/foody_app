@@ -20,7 +20,7 @@ class CommentService {
 
       List<Comment> commentModels =
           body.map((dynamic e) => Comment.fromJson(e)).toList();
-      // print(commentModels);
+
       return commentModels;
     } else {
       print(response.statusCode);
