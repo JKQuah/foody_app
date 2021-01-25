@@ -14,10 +14,13 @@ import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/services/preferenceHTTPService.dart';
 import 'package:foody_app/utils/convertUtils.dart';
 import 'package:foody_app/utils/validatorUtils.dart';
+import 'package:foody_app/view/meat/meatViewAll.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:foody_app/widget/app_bar.dart';
+
+import 'meatViewOne.dart';
 
 class MeatCreate extends StatefulWidget {
   MeatCreate({Key key}) : super(key: key);
@@ -76,7 +79,12 @@ class _MeatCreateState extends State<MeatCreate> {
               color: Colors.grey[900],
               size: 35,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MeatViewAll()),
+              );
+            },
           ),
           title: const Text(
             'Create A Meet & Eat',
@@ -500,10 +508,14 @@ class _MeatCreateState extends State<MeatCreate> {
       form.save();
       try {
         print(meatModel.toJson());
-        await MeatHTTPService.createMeat(meatModel);
+        int meatId = await MeatHTTPService.createMeat(meatModel);
         Scaffold.of(context).showSnackBar(SnackBar(
             backgroundColor: AppColors.PRIMARY_COLOR,
             content: Text("Create Successfully")));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MeatViewOne(meatId)),
+        );
       } on Exception catch (_) {
         print("create meat HTTP fail");
         Scaffold.of(context).showSnackBar(SnackBar(

@@ -196,6 +196,10 @@ class _SuggestionFilterState extends State<SuggestionFilter> {
             List<int> preferenceIds = selectedPreferences.map((e) => e.id).toList();
             print("preferences: "+ preferenceIds.toString());
             print(locationDTO.toJson());
+            Navigator.pop(context,{
+              "preferences": selectedPreferences,
+              "location": locationDTO
+            });
           },
         ),
       ),

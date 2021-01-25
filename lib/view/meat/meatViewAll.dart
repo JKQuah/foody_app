@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/model/location_dto.dart';
 import 'package:foody_app/model/meat_model.dart';
+import 'package:foody_app/model/preference_model.dart';
 import 'package:foody_app/resource/app_colors.dart';
+import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/utils/convertUtils.dart';
+import 'package:foody_app/view/meat/meatCreate.dart';
+import 'package:foody_app/view/meat/meatViewOne.dart';
 import 'package:foody_app/widget/app_bar.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 
+import '../suggestionFilter.dart';
 import 'meatUpdate.dart';
 
 class MeatViewAll extends StatefulWidget {
@@ -17,11 +23,13 @@ class MeatViewAll extends StatefulWidget {
 class _MeatViewAllState extends State<MeatViewAll> {
   Future<List<MeatModel>> upcomingMeatMeatModels;
   Future<List<MeatModel>> futureMeatMeatModels;
+  List<PreferenceModel> selectedPreferences;
+  LocationDTO selectedLocation;
 
   @override
   void didChangeDependencies() {
     upcomingMeatMeatModels = MeatHTTPService.getUpcomingMeats();
-    futureMeatMeatModels = MeatHTTPService.getExploreMeats();
+    futureMeatMeatModels = MeatHTTPService.getExploreMeats(null, null);
     super.didChangeDependencies();
   }
 
@@ -29,16 +37,39 @@ class _MeatViewAllState extends State<MeatViewAll> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: FoodyAppBar(),
+        appBar: AppBar(
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Image.asset(
+                  'assets/app_logo.png',
+                  height: 35,
+                ),
+              ),
+              Text(
+                "Meat & Eat",
+                style: TextStyle(
+                  fontFamily: 'Nexa',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: AppColors.TEXT_COLOR,
+                ),
+              ),
+            ],
+          ),
+        ),
         body: SingleChildScrollView(
           child: FutureBuilder<List<dynamic>>(
             future: Future.wait([upcomingMeatMeatModels, futureMeatMeatModels]),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.hasData) {
                 List<MeatModel> upcomingMeatMeatModels =
-                snapshot.data[0] as List<MeatModel>;
+                    snapshot.data[0] as List<MeatModel>;
                 List<MeatModel> exploringMeats =
-                snapshot.data[1] as List<MeatModel>;
+                    snapshot.data[1] as List<MeatModel>;
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -77,20 +108,40 @@ class _MeatViewAllState extends State<MeatViewAll> {
                                 ),
                               ],
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MeatCreate()),
+                              );
+                            },
                             color: AppColors.PRIMARY_COLOR,
                           )
                         ],
                       ),
                       Container(
                         height: 360.0,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: exploringMeats.length,
-                            itemBuilder: (BuildContext ctxt, int index) {
-                              return new UpcomingMeatCard(
-                                  exploringMeats[index]);
-                            }),
+                        child: (upcomingMeatMeatModels.length > 0)
+                            ? ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: upcomingMeatMeatModels.length,
+                                itemBuilder: (BuildContext ctxt, int index) {
+                                  return new UpcomingMeatCard(
+                                      upcomingMeatMeatModels[index]);
+                                })
+                            : Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 50, horizontal: 30),
+                                  child: Text(
+                                    "You have no upcoming meats. Create or join one now!",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
                       ),
                       Divider(),
                       Row(
@@ -128,10 +179,70 @@ class _MeatViewAllState extends State<MeatViewAll> {
                                 ),
                               ],
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              final Map<String, dynamic> filterResult =
+                                  await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    fullscreenDialog: true,
+                                    builder: (context) => SuggestionFilter()),
+                              );
+                              List<PreferenceModel> selectedPreferences =
+                                  filterResult["preferences"]
+                                      as List<PreferenceModel>;
+                              LocationDTO selectedLocation =
+                                  filterResult["location"] as LocationDTO;
+                              setState(() {
+                                this.selectedPreferences = selectedPreferences;
+                                this.selectedLocation = selectedLocation;
+                                futureMeatMeatModels =
+                                    MeatHTTPService.getExploreMeats(
+                                        selectedLocation, selectedPreferences);
+                              });
+                            },
                             color: AppColors.PRIMARY_COLOR,
                           )
                         ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Filtering...",
+                              style: TextStyle(
+                                  fontSize: 18, fontStyle: FontStyle.italic),
+                            ),
+                            if (hasPrefFilter())
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  "Preference: " +
+                                      this
+                                          .selectedPreferences
+                                          .map((e) => e.name)
+                                          .join(", "),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            if (hasLocFilter())
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  "Nearby: " +
+                                      this.selectedLocation.locationName,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                       ...exploringMeats.map((e) => new ExploreMeatCard(e))
                     ]);
@@ -143,6 +254,17 @@ class _MeatViewAllState extends State<MeatViewAll> {
             },
           ),
         ));
+  }
+
+  bool hasPrefFilter() {
+    bool hasPrefFilter =
+        this.selectedPreferences != null || this.selectedPreferences.length > 0;
+    return hasPrefFilter;
+  }
+
+  bool hasLocFilter() {
+    bool hasLoc = this.selectedLocation != null;
+    return hasLoc;
   }
 }
 
@@ -167,8 +289,7 @@ class UpcomingMeatCard extends StatelessWidget {
                     topLeft: Radius.circular(1),
                     topRight: Radius.circular(1),
                     bottomLeft: Radius.circular(1),
-                    bottomRight: Radius.circular(1)
-                ),
+                    bottomRight: Radius.circular(1)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
@@ -209,7 +330,10 @@ class UpcomingMeatCard extends StatelessWidget {
           ],
         ),
         onTap: () {
-          print("tap explore");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MeatViewOne(meatModel.id)),
+          );
         },
       ),
     );
@@ -254,7 +378,10 @@ class ExploreMeatCard extends StatelessWidget {
         ],
       ),
       onTap: () {
-        print("tap explore");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MeatViewOne(meatModel.id)),
+        );
       },
     );
   }

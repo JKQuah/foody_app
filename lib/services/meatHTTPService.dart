@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:foody_app/model/location_dto.dart';
 import 'package:foody_app/model/meat_model.dart';
 import 'package:foody_app/model/meat_participant_model.dart';
+import 'package:foody_app/model/preference_model.dart';
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:foody_app/utils/convertUtils.dart';
@@ -51,9 +53,18 @@ class MeatHTTPService {
     }
   }
 
-  static Future<List<MeatModel>> getExploreMeats() async {
-    String requestUrl = "${meatURL}/explore";
+  static Future<List<MeatModel>> getExploreMeats(LocationDTO locationDTO, List<PreferenceModel> preferences) async {
+    String locationParams = "";
+    String preferencesParams = "";
+    if (locationDTO != null) {
+      locationParams = "latitude=${locationDTO.latitude}&longitude=${locationDTO.longitude}";
+    }
+    if (preferences != null) {
+      preferencesParams = preferences.map((e) => "&${e.id}").join();
+    }
+    String requestUrl = "${meatURL}/explore?${preferencesParams}${locationParams}";
     Map<String, String> headers = await HTTPUtils.getHeaders();
+    print(requestUrl);
     Response res = await get(requestUrl, headers: headers);
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);

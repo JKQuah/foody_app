@@ -14,19 +14,26 @@ import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/services/preferenceHTTPService.dart';
 import 'package:foody_app/utils/convertUtils.dart';
 import 'package:foody_app/utils/validatorUtils.dart';
+import 'package:foody_app/view/meat/meatViewOne.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:foody_app/widget/app_bar.dart';
 
 class MeatUpdate extends StatefulWidget {
-  MeatUpdate({Key key}) : super(key: key);
+  int meatId;
+  MeatUpdate(this.meatId, {Key key}) : super(key: key);
 
   @override
-  _MeatUpdateState createState() => _MeatUpdateState();
+  _MeatUpdateState createState() => _MeatUpdateState(meatId);
 }
 
 class _MeatUpdateState extends State<MeatUpdate> {
+
+  int meatId;
+
+  _MeatUpdateState(this.meatId);
+
   final _formKey = GlobalKey<FormState>();
   final _picker = ImagePicker();
   dynamic imageUrl = "";
@@ -51,7 +58,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
   @override
   void didChangeDependencies() async {
     preferenceList = PreferenceHTTPService.getPreferences();
-    meatModel = MeatHTTPService.getOneMeat(43);
+    meatModel = MeatHTTPService.getOneMeat(meatId);
     MeatModel model = await meatModel;
     print(model.toJson());
     imageUrl = model.imageUrl;
@@ -83,7 +90,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text(
-            'Create A Meet & Eat',
+            'Update Meet & Eat',
             style: TextStyle(
               fontFamily: 'Nexa',
               fontWeight: FontWeight.bold,
@@ -430,7 +437,38 @@ class _MeatUpdateState extends State<MeatUpdate> {
                         height: 20,
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStateProperty.all<Color>(AppColors.DANGER_COLOR),
+                          ),
+                          onPressed: () => handleCancel(context, snapshotMeat),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0),
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                "Cancel Meet & Eat",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
                         child: ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
@@ -502,12 +540,27 @@ class _MeatUpdateState extends State<MeatUpdate> {
         Scaffold.of(context).showSnackBar(SnackBar(
             backgroundColor: AppColors.PRIMARY_COLOR,
             content: Text("Update Successfully")));
+        Navigator.of(context).pop();
       } on Exception catch (_) {
         print("update meat HTTP fail");
         Scaffold.of(context).showSnackBar(SnackBar(
             backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to update")));
       }
     }
+  }
+  void handleCancel(BuildContext context, MeatModel meatModel) async {
+      try {
+        print(meatModel.toJson());
+        await MeatHTTPService.cancelMeat(meatId);
+        Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: AppColors.PRIMARY_COLOR,
+            content: Text("Cancel Successfully")));
+        Navigator.of(context).pop();
+      } on Exception catch (_) {
+        print("cancel meat HTTP fail");
+        Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to Cancel")));
+      }
   }
 
   _selectImage(BuildContext parentContext, MeatModel meatModel) async {

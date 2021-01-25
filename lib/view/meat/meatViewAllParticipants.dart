@@ -3,23 +3,30 @@ import 'package:foody_app/model/meat_participant_model.dart';
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/view/meat/meatUpdate.dart';
+import 'package:foody_app/view/meat/meatViewAll.dart';
 import 'package:foody_app/view/meat/meatViewOne.dart';
 import 'package:foody_app/widget/app_bar.dart';
 
 class MeatViewAllParticipants extends StatefulWidget {
-  MeatViewAllParticipants({Key key}) : super(key: key);
+  int meatId;
+
+  MeatViewAllParticipants(this.meatId, {Key key}) : super(key: key);
 
   @override
   _MeatViewAllParticipantsState createState() =>
-      _MeatViewAllParticipantsState();
+      _MeatViewAllParticipantsState(meatId);
 }
 
 class _MeatViewAllParticipantsState extends State<MeatViewAllParticipants> {
+  int meatId;
+
+  _MeatViewAllParticipantsState(this.meatId);
+
   Future<List<MeatParticipantModel>> futureMeatParticipants;
 
   @override
   void didChangeDependencies() {
-    futureMeatParticipants = MeatHTTPService.readAllMeatParticipants(43);
+    futureMeatParticipants = MeatHTTPService.readAllMeatParticipants(meatId);
     super.didChangeDependencies();
   }
 
@@ -92,7 +99,7 @@ class _MeatViewAllParticipantsState extends State<MeatViewAllParticipants> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MeatViewOne()),
+                                builder: (context) => MeatViewAll()),
                           );
                         },
                         icon: Icon(Icons.chevron_right)),
@@ -110,35 +117,50 @@ class _MeatViewAllParticipantsState extends State<MeatViewAllParticipants> {
                     ),
                   ),
                   Expanded(
-                    child: ListView.builder(
-                        itemCount: participants.length,
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          return new ListTile(
-                            leading: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                    minWidth: 44,
-                                    minHeight: 44,
-                                    maxWidth: 44,
-                                    maxHeight: 44),
-                                child: Container(
-                                    decoration: new BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: new DecorationImage(
-                                            fit: BoxFit.contain,
-                                            image: new NetworkImage(
-                                                '${participants[index].imageUrl}'))))),
-                            title: Text('${participants[index].username}'),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MeatViewOne()),
-                                  );
-                                },
-                                icon: Icon(Icons.chevron_right)),
-                          );
-                        }),
+                    child: (participants.length > 0)
+                        ? ListView.builder(
+                            itemCount: participants.length,
+                            itemBuilder: (BuildContext ctxt, int index) {
+                              return new ListTile(
+                                leading: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                        minWidth: 44,
+                                        minHeight: 44,
+                                        maxWidth: 44,
+                                        maxHeight: 44),
+                                    child: Container(
+                                        decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: new DecorationImage(
+                                                fit: BoxFit.contain,
+                                                image: new NetworkImage(
+                                                    '${participants[index].imageUrl}'))))),
+                                title: Text('${participants[index].username}'),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MeatViewAll()),
+                                      );
+                                    },
+                                    icon: Icon(Icons.chevron_right)),
+                              );
+                            })
+                        : Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 50, horizontal: 30),
+                              child: Text(
+                                "This meat does not have any participants yet",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                 ]);
           } else if (snapshot.hasError) {

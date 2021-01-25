@@ -6,7 +6,11 @@ import 'package:foody_app/model/preference_model.dart';
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/utils/convertUtils.dart';
+import 'package:foody_app/view/meat/meatViewAllParticipants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'meatUpdate.dart';
+import 'meatViewAll.dart';
 
 class MeatViewOne extends StatefulWidget {
   int meatId;
@@ -27,8 +31,12 @@ class _MeatViewOneState extends State<MeatViewOne> {
 
   @override
   void initState() {
-    futureMeatModel = MeatHTTPService.getOneMeat(meatId);
+    _fetchOneMeat(meatId);
     super.initState();
+  }
+
+  _fetchOneMeat(int meatId) {
+    futureMeatModel = MeatHTTPService.getOneMeat(meatId);
   }
 
   @override
@@ -187,7 +195,12 @@ class _MeatViewOneState extends State<MeatViewOne> {
                               fontWeight: FontWeight.w600,
                               color: AppColors.ACCENT_COLOR),
                         ),
-                        onPressed: () => {print("see participants")},
+                        onPressed: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MeatViewAllParticipants(meatId)))
+                        },
                       ),
                     ),
                     Padding(
@@ -219,16 +232,31 @@ class _MeatViewOneState extends State<MeatViewOne> {
 
   Widget buttonFactory(MeatModel meatModel) {
     if (meatModel.meatStatus == "cancelled") return CancelledText();
-    if (meatModel.role == "organiser") return UpdateButton(meatModel.id);
-    if (meatModel.userStatus == "going") return UnjoinButton(meatModel.id);
-    return JoinButton(meatModel.id);
+    if (meatModel.role == "organiser") return UpdateButton(meatModel.id, () {
+      setState(() {
+        futureMeatModel = MeatHTTPService.getOneMeat(meatId);
+        // to rerender this page after updated
+      });
+    });
+    if (meatModel.userStatus == "going")
+      return UnjoinButton(meatModel.id, () {
+        setState(() {
+          _fetchOneMeat(meatModel.id);
+        });
+      });
+    return JoinButton(meatModel.id, () {
+      setState(() {
+        _fetchOneMeat(meatModel.id);
+      });
+    });
   }
 }
 
 class UpdateButton extends StatelessWidget {
   int meatId;
+  Function afterUpdated;
 
-  UpdateButton(this.meatId);
+  UpdateButton(this.meatId, this.afterUpdated);
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +286,11 @@ class UpdateButton extends StatelessWidget {
             MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
       ),
       onPressed: () async {
-        // Navigator.push(context, route)
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MeatUpdate(meatId)),
+        );
+        afterUpdated();
       },
     );
   }
@@ -286,8 +318,9 @@ class CancelledText extends StatelessWidget {
 
 class JoinButton extends StatelessWidget {
   int meatId;
+  Function afterJoined;
 
-  JoinButton(this.meatId);
+  JoinButton(this.meatId, this.afterJoined);
 
   @override
   Widget build(BuildContext context) {
@@ -322,6 +355,8 @@ class JoinButton extends StatelessWidget {
           Scaffold.of(context).showSnackBar(SnackBar(
               backgroundColor: AppColors.PRIMARY_COLOR,
               content: Text("Join Successfully")));
+          MeatModel updated = await MeatHTTPService.getOneMeat(meatId);
+          afterJoined();
         } on Exception catch (_) {
           print("join meat HTTP fail");
           Scaffold.of(context).showSnackBar(SnackBar(
@@ -335,8 +370,9 @@ class JoinButton extends StatelessWidget {
 
 class UnjoinButton extends StatelessWidget {
   int meatId;
+  Function afterUnJoined;
 
-  UnjoinButton(this.meatId);
+  UnjoinButton(this.meatId, this.afterUnJoined);
 
   @override
   Widget build(BuildContext context) {
@@ -371,6 +407,7 @@ class UnjoinButton extends StatelessWidget {
           Scaffold.of(context).showSnackBar(SnackBar(
               backgroundColor: AppColors.PRIMARY_COLOR,
               content: Text("Unjoin Successfully")));
+          afterUnJoined();
         } on Exception catch (_) {
           print("unjoin meat HTTP fail");
           Scaffold.of(context).showSnackBar(SnackBar(
