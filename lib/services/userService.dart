@@ -2,9 +2,7 @@ import 'dart:convert';
 
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/utils/HTTPUtils.dart';
-import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:http/http.dart';
-import 'package:foody_app/model/user_model.dart';
 
 class UserService {
   final String userURL = AppConstants.APP_BASE_URL + "/users";

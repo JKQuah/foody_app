@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:foody_app/chat/chats_page.dart';
 import 'package:foody_app/model/location_dto.dart';
 import 'package:foody_app/model/meat_model.dart';
 import 'package:foody_app/model/preference_model.dart';
@@ -60,6 +62,26 @@ class _MeatViewAllState extends State<MeatViewAll> {
               ),
             ],
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: IconButton(
+                icon: const Icon(
+                  CupertinoIcons.chat_bubble_2,
+                  size: 30,
+                ),
+                color: AppColors.PRIMARY_COLOR,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      //return ChatRoomView();
+                      return ChatsPage();
+                    },
+                  ));
+                },
+              ),
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: FutureBuilder<List<dynamic>>(

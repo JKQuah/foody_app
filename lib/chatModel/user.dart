@@ -37,6 +37,13 @@ class User {
     lastMessageTime: Utils.toDateTime(json['lastMessageTime']),
   );
 
+  static User fromMysql(Map<String, dynamic> json) => User(
+    idUser: json['id'].toString(),
+    name: json['username'],
+    urlAvatar: json['media_link'],
+    lastMessageTime: DateTime.now(),
+  );
+
   Map<String, dynamic> toJson() => {
     'idUser': idUser,
     'name': name,
