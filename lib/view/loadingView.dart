@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:foody_app/resource/app_colors.dart';
+import 'package:foody_app/view/user/createProfile.dart';
 import 'indexView.dart';
 
 class Loading extends StatefulWidget {
@@ -16,7 +17,7 @@ class _LoadingState extends State<Loading> {
     Timer(
         Duration(seconds: 3),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyHomePage())));
+            context, MaterialPageRoute(builder: (context) => ProfileCreate())));
   }
 
   @override

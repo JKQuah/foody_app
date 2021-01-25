@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:foody_app/model/profile_dto.dart';
+import 'package:foody_app/model/profile_model.dart';
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:http/http.dart';
