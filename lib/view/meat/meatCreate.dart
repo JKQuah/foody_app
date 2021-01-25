@@ -8,6 +8,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:foody_app/model/location_dto.dart';
 import 'package:foody_app/model/meat_model.dart';
 import 'package:foody_app/model/preference_model.dart';
+import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 import 'package:foody_app/services/preferenceHTTPService.dart';
@@ -381,7 +382,19 @@ class _MeatCreateState extends State<MeatCreate> {
                         height: 20,
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Location *'),
+                        decoration: const InputDecoration(
+                          labelText: 'Location',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: Icon(
+                            Icons.location_pin,
+                            color: AppColors.TEXT_COLOR,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.PRIMARY_COLOR, width: 1.5),
+                          ),
+                        ),
+                        readOnly: true,
                         controller: locationCtl,
                         validator: requiredValidation,
                         onTap: () async {
@@ -416,10 +429,35 @@ class _MeatCreateState extends State<MeatCreate> {
                       SizedBox(
                         height: 20,
                       ),
-                      Center(
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStateProperty.all<Color>(AppColors.PRIMARY_COLOR),
+                          ),
                           onPressed: () => handleSubmit(context, snapshotMeat),
-                          child: Text('Create'),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0),
+                                child: Icon(
+                                  Icons.save,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                "Update",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
