@@ -53,18 +53,20 @@ class MeatHTTPService {
     }
   }
 
-  static Future<List<MeatModel>> getExploreMeats(LocationDTO locationDTO, List<PreferenceModel> preferences) async {
+  static Future<List<MeatModel>> getExploreMeats(
+      LocationDTO locationDTO, List<PreferenceModel> preferences) async {
     String locationParams = "";
     String preferencesParams = "";
     if (locationDTO != null) {
       if (locationDTO.longitude != null && locationDTO.latitude != null) {
-        locationParams = "latitude=${locationDTO.latitude}&longitude=${locationDTO.longitude}";
+        locationParams =
+            "latitude=${locationDTO.latitude}&longitude=${locationDTO.longitude}";
       }
     }
     if (preferences != null) {
       preferencesParams = preferences.map((e) => "&${e.id}").join();
     }
-    String requestUrl = "${meatURL}/explore?${preferencesParams}${locationParams}";
+    String requestUrl = "$meatURL/explore?$preferencesParams$locationParams";
     Map<String, String> headers = await HTTPUtils.getHeaders();
     print(requestUrl);
     Response res = await get(requestUrl, headers: headers);
@@ -135,8 +137,9 @@ class MeatHTTPService {
     Response res = await get(requestUrl, headers: headers);
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
-      List<MeatParticipantModel> meatParticipantModels =
-      body.map((dynamic item) => MeatParticipantModel.fromJson(item)).toList();
+      List<MeatParticipantModel> meatParticipantModels = body
+          .map((dynamic item) => MeatParticipantModel.fromJson(item))
+          .toList();
       return meatParticipantModels;
     } else {
       throw Exception("Error at MeatHTTPService readAllMeatParticipants");
