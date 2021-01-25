@@ -12,8 +12,8 @@ class LocationDTO {
     return LocationDTO(
       latitude: ConvertUtils.convertNumberToDouble(json['latitude']),
       longitude: ConvertUtils.convertNumberToDouble(json['longitude']),
-      locationName: json['locationName'] as String,
-      locationAddress: json['locationAddress'] as String,
+      locationName: json['location_name'] as String,
+      locationAddress: json['location_address'] as String,
     );
   }
 

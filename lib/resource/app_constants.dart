@@ -2,9 +2,9 @@
 
 class AppConstants {
   static const String APP_NAME = 'Foody App';
-  static const baseURL = "http://192.168.8.119:3000";
+  static const baseURL = "http://192.168.1.107:3000";
   static const googleApiKey = "AIzaSyDhbQKpuMh6m18t1RETNkVFNIcyyy-w3fQ";
-  static const String APP_BASE_URL = "http://192.168.8.119:3000";
+  static const String APP_BASE_URL = "http://192.168.1.107:3000";
   static const String GOOGLE_API_KEY =
       "AIzaSyDhbQKpuMh6m18t1RETNkVFNIcyyy-w3fQ";
 
