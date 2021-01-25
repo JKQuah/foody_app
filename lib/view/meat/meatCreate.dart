@@ -19,23 +19,22 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:foody_app/widget/app_bar.dart';
 
-class MeatUpdate extends StatefulWidget {
-  MeatUpdate({Key key}) : super(key: key);
+class MeatCreate extends StatefulWidget {
+  MeatCreate({Key key}) : super(key: key);
 
   @override
-  _MeatUpdateState createState() => _MeatUpdateState();
+  _MeatCreateState createState() => _MeatCreateState();
 }
 
-class _MeatUpdateState extends State<MeatUpdate> {
+class _MeatCreateState extends State<MeatCreate> {
   final _formKey = GlobalKey<FormState>();
   final _picker = ImagePicker();
+  MeatModel meatModel;
   dynamic imageUrl = "";
   GoogleMapsPlaces _places =
       GoogleMapsPlaces(apiKey: AppConstants.googleApiKey);
 
-  // PickedFile file;
   Future<List<PreferenceModel>> preferenceList;
-  Future<MeatModel> meatModel;
   bool _startTimeError = false;
   bool _endTimeError = false;
 
@@ -49,21 +48,18 @@ class _MeatUpdateState extends State<MeatUpdate> {
   final TextEditingController locationCtl = TextEditingController();
 
   @override
-  void didChangeDependencies() async {
+  void initState() {
+    super.initState();
+    meatModel  = new MeatModel();
+    meatModel.startTime = new DateTime.now();
+    meatModel.endTime = new DateTime.now();
+
+    startDateCtl.text = ConvertUtils.fromDateTimeToDateStr(meatModel.startTime);
+    startTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(meatModel.startTime);
+    endDateCtl.text = ConvertUtils.fromDateTimeToDateStr(meatModel.endTime);
+    endTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(meatModel.endTime);
+
     preferenceList = PreferenceHTTPService.getPreferences();
-    meatModel = MeatHTTPService.getOneMeat(43);
-    MeatModel model = await meatModel;
-    print(model.toJson());
-    imageUrl = model.imageUrl;
-    titleCtl.text = model.title;
-    descriptionCtl.text = model.description;
-    startDateCtl.text = ConvertUtils.fromDateTimeToDateStr(model.startTime);
-    startTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(model.startTime);
-    endDateCtl.text = ConvertUtils.fromDateTimeToDateStr(model.endTime);
-    endTimeCtl.text = ConvertUtils.fromDateTimeToTimeStr(model.endTime);
-    maxParticipantCtl.text = model.maxParticipant.toString();
-    locationCtl.text = model.locationDTO.locationName;
-    super.didChangeDependencies();
   }
 
   @override
@@ -90,13 +86,12 @@ class _MeatUpdateState extends State<MeatUpdate> {
             ),
           ),
         ),
-        body: FutureBuilder<List<dynamic>>(
-          future: Future.wait([preferenceList, meatModel]),
-          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+        body: FutureBuilder<List<PreferenceModel>>(
+          future: preferenceList,
+          builder: (context, AsyncSnapshot<List<PreferenceModel>> snapshot) {
             if (snapshot.hasData) {
               List<PreferenceModel> snapshotPreferences =
-                  snapshot.data[0] as List<PreferenceModel>;
-              MeatModel snapshotMeat = snapshot.data[1] as MeatModel;
+                  snapshot.data as List<PreferenceModel>;
               return SingleChildScrollView(
                   child: Form(
                 key: _formKey,
@@ -109,15 +104,24 @@ class _MeatUpdateState extends State<MeatUpdate> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Image(
-                          image: (imageUrl is Uint8List)
-                              ? MemoryImage(imageUrl)
-                              : NetworkImage(imageUrl),
-                          fit: BoxFit.fitWidth),
+                      (imageUrl is Uint8List)
+                          ? Image.memory(imageUrl)
+                          : Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 50),
+                              child: Text(
+                                  "Please Add An Image",
+                                style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              ),
+                            ),
+                          ),
                       FlatButton.icon(
                         icon: Icon(Icons.add_a_photo),
-                        label: Text("Change Image"),
-                        onPressed: () => {_selectImage(context, snapshotMeat)},
+                        label: Text("Upload an Image"),
+                        onPressed: () => {_selectImage(context, meatModel)},
                       ),
                       SizedBox(
                         height: 20,
@@ -126,8 +130,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
                         controller: titleCtl,
                         decoration: InputDecoration(labelText: 'Title *'),
                         validator: requiredValidation,
-                        onSaved: (val) =>
-                            setState(() => snapshotMeat.title = val),
+                        onSaved: (val) => setState(() => meatModel.title = val),
                       ),
                       SizedBox(
                         height: 20,
@@ -136,7 +139,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
                         controller: descriptionCtl,
                         decoration: InputDecoration(labelText: 'Description'),
                         onSaved: (val) =>
-                            setState(() => snapshotMeat.description = val),
+                            setState(() => meatModel.description = val),
                       ),
                       SizedBox(
                         height: 20,
@@ -163,7 +166,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
                                     // Show Date Picker Here
                                     DateTime date = await showDatePicker(
                                         context: context,
-                                        initialDate: snapshotMeat.startTime,
+                                        initialDate: DateTime.now(),
                                         firstDate: DateTime.now(),
                                         lastDate: DateTime(2100));
 
@@ -175,14 +178,14 @@ class _MeatUpdateState extends State<MeatUpdate> {
                                         date.year,
                                         date.month,
                                         date.day,
-                                        snapshotMeat.startTime.hour,
-                                        snapshotMeat.startTime.minute);
+                                        meatModel.startTime.hour,
+                                        meatModel.startTime.minute);
                                     setState(() {
-                                      snapshotMeat.startTime = newDateTime;
+                                      meatModel.startTime = newDateTime;
                                       _startTimeError =
                                           DateTime.now().isAfter(newDateTime);
                                       _endTimeError = newDateTime
-                                          .isAfter(snapshotMeat.endTime);
+                                          .isAfter(meatModel.endTime);
                                     });
                                   }),
                             ),
@@ -207,23 +210,22 @@ class _MeatUpdateState extends State<MeatUpdate> {
                                     // Show Date Picker Here
                                     TimeOfDay timeOfDay = await showTimePicker(
                                         context: context,
-                                        initialTime: TimeOfDay.fromDateTime(
-                                            snapshotMeat.startTime));
+                                        initialTime: TimeOfDay.now());
 
                                     startTimeCtl.text =
                                         timeOfDay.format(context);
                                     DateTime newDateTime = new DateTime(
-                                        snapshotMeat.startTime.year,
-                                        snapshotMeat.startTime.month,
-                                        snapshotMeat.startTime.day,
+                                        meatModel.startTime.year,
+                                        meatModel.startTime.month,
+                                        meatModel.startTime.day,
                                         timeOfDay.hour,
                                         timeOfDay.minute);
                                     setState(() {
-                                      snapshotMeat.startTime = newDateTime;
+                                      meatModel.startTime = newDateTime;
                                       _startTimeError =
                                           DateTime.now().isAfter(newDateTime);
                                       _endTimeError = newDateTime
-                                          .isAfter(snapshotMeat.endTime);
+                                          .isAfter(meatModel.endTime);
                                     });
                                   }),
                             )
@@ -253,7 +255,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
                                       // Show Date Picker Here
                                       DateTime date = await showDatePicker(
                                           context: context,
-                                          initialDate: snapshotMeat.endTime,
+                                          initialDate: DateTime.now(),
                                           firstDate: DateTime.now(),
                                           lastDate: DateTime(2100));
 
@@ -264,13 +266,13 @@ class _MeatUpdateState extends State<MeatUpdate> {
                                           date.year,
                                           date.month,
                                           date.day,
-                                          snapshotMeat.endTime.hour,
-                                          snapshotMeat.endTime.minute);
+                                          meatModel.endTime.hour,
+                                          meatModel.endTime.minute);
                                       setState(() {
-                                        snapshotMeat.endTime = newDateTime;
+                                        meatModel.endTime = newDateTime;
                                         _endTimeError =
-                                            snapshotMeat.startTime != null &&
-                                                snapshotMeat.startTime
+                                            meatModel.startTime != null &&
+                                                meatModel.startTime
                                                     .isAfter(newDateTime);
                                       });
                                     })),
@@ -295,22 +297,21 @@ class _MeatUpdateState extends State<MeatUpdate> {
                                     // Show Date Picker Here
                                     TimeOfDay timeOfDay = await showTimePicker(
                                         context: context,
-                                        initialTime: TimeOfDay.fromDateTime(
-                                            snapshotMeat.endTime));
+                                        initialTime: TimeOfDay.now());
 
                                     endTimeCtl.text = timeOfDay.format(context);
 
                                     DateTime newDateTime = new DateTime(
-                                        snapshotMeat.endTime.year,
-                                        snapshotMeat.endTime.month,
-                                        snapshotMeat.endTime.day,
+                                        meatModel.endTime.year,
+                                        meatModel.endTime.month,
+                                        meatModel.endTime.day,
                                         timeOfDay.hour,
                                         timeOfDay.minute);
                                     setState(() {
-                                      snapshotMeat.endTime = newDateTime;
+                                      meatModel.endTime = newDateTime;
                                       _endTimeError =
-                                          snapshotMeat.startTime != null &&
-                                              snapshotMeat.startTime
+                                          meatModel.startTime != null &&
+                                              meatModel.startTime
                                                   .isAfter(newDateTime);
                                     });
                                   }),
@@ -326,13 +327,13 @@ class _MeatUpdateState extends State<MeatUpdate> {
                         keyboardType: TextInputType.number,
                         validator: maxParticipantValidation,
                         onSaved: (val) => setState(
-                            () => snapshotMeat.maxParticipant = int.parse(val)),
+                            () => meatModel.maxParticipant = int.parse(val)),
                       ),
                       SizedBox(
                         height: 20,
                       ),
                       ChipsInput(
-                        initialValue: snapshotMeat.preferences,
+                        initialValue: [],
                         decoration: InputDecoration(
                           labelText: "Preferences",
                         ),
@@ -357,7 +358,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
                         },
                         onChanged: (data) {
                           setState(() {
-                            snapshotMeat.preferences =
+                            meatModel.preferences =
                                 data.cast<PreferenceModel>();
                           });
                         },
@@ -417,7 +418,7 @@ class _MeatUpdateState extends State<MeatUpdate> {
 
                             locationCtl.text = name;
                             setState(() {
-                              snapshotMeat.locationDTO = new LocationDTO(
+                              meatModel.locationDTO = new LocationDTO(
                                   latitude: lat,
                                   longitude: lng,
                                   locationName: name,
@@ -430,26 +431,27 @@ class _MeatUpdateState extends State<MeatUpdate> {
                         height: 20,
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                         child: ElevatedButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStateProperty.all<Color>(AppColors.PRIMARY_COLOR),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.PRIMARY_COLOR),
                           ),
-                          onPressed: () => handleSubmit(context, snapshotMeat),
+                          onPressed: () => handleSubmit(context, meatModel),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Icon(
                                   Icons.save,
                                   color: Colors.white,
                                 ),
                               ),
                               Text(
-                                "Update",
+                                "Create",
                                 style: TextStyle(
                                   fontSize: 22,
                                   color: Colors.white,
@@ -498,14 +500,15 @@ class _MeatUpdateState extends State<MeatUpdate> {
       form.save();
       try {
         print(meatModel.toJson());
-        await MeatHTTPService.updateMeat(meatModel);
+        await MeatHTTPService.createMeat(meatModel);
         Scaffold.of(context).showSnackBar(SnackBar(
             backgroundColor: AppColors.PRIMARY_COLOR,
-            content: Text("Update Successfully")));
+            content: Text("Create Successfully")));
       } on Exception catch (_) {
-        print("update meat HTTP fail");
+        print("create meat HTTP fail");
         Scaffold.of(context).showSnackBar(SnackBar(
-            backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to update")));
+            backgroundColor: AppColors.DANGER_COLOR,
+            content: Text("Fail to create")));
       }
     }
   }
