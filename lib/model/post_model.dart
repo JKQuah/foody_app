@@ -48,7 +48,7 @@ class PostModel {
       "id": id,
       "user_id": userId,
       "images": ConvertUtils.convertStringToBase64String(postImages),
-      "location": location.toJson(),
+      "locationDTO": location.toJson(),
       "description": caption,
       "services": services,
       "cleanliness": cleanliness,

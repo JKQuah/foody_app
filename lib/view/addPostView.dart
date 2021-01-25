@@ -3,10 +3,14 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:foody_app/model/locationDTO.dart';
 import 'package:foody_app/model/post_model.dart';
 import 'package:foody_app/resource/app_colors.dart';
+import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/services/postService.dart';
 import 'package:foody_app/view/homeView.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -26,6 +30,9 @@ class _AddPostViewState extends State<AddPostView> {
   final _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GoogleMapsPlaces _places =
+      GoogleMapsPlaces(apiKey: AppConstants.GOOGLE_API_KEY);
+  final TextEditingController locationCtl = TextEditingController();
 
   @override
   void initState() {
@@ -69,12 +76,13 @@ class _AddPostViewState extends State<AddPostView> {
                     right: 20.0,
                     left: 20.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           ClipRRect(
                             borderRadius: BorderRadius.circular(50),
@@ -92,16 +100,33 @@ class _AddPostViewState extends State<AddPostView> {
                                             BorderRadius.circular(50)),
                                     width: 75,
                                     height: 75,
-                                    child: Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.grey[800],
-                                    ),
                                   ),
                           ),
-                          FlatButton(
-                            child: Text("Add Photo"),
-                            onPressed: () => {_selectImage(context)},
-                          ),
+                          _file == null
+                              ? FlatButton(
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.grey[800],
+                                      ),
+                                      Text(" Add Photo"),
+                                    ],
+                                  ),
+                                  onPressed: () => {_selectImage(context)},
+                                )
+                              : FlatButton(
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.grey[800],
+                                      ),
+                                      Text(" Change Photo"),
+                                    ],
+                                  ),
+                                  onPressed: () => {_selectImage(context)},
+                                ),
                         ],
                       ),
                     ),
@@ -123,23 +148,10 @@ class _AddPostViewState extends State<AddPostView> {
                         }
                         return null;
                       },
-                      // onTap: () async {
-                      //   Position position = await Geolocator.getCurrentPosition(
-                      //       desiredAccuracy: LocationAccuracy.high);
-                      //   print(position);
-                      // },
                     ),
-                    // ElevatedButton(
-                    //   onPressed: () async {
-                    //     Position position = await Geolocator.getCurrentPosition(
-                    //         desiredAccuracy: LocationAccuracy.high);
-                    //     print(position);
-                    //     // print(_determinePosition);
-                    //   },
-                    //   child: Text("Testing"),
-                    // ),
                     SizedBox(height: 15.0),
                     TextFormField(
+                      readOnly: true,
                       decoration: const InputDecoration(
                         hintText: 'Where is the restaurant?',
                         border: const OutlineInputBorder(),
@@ -154,6 +166,35 @@ class _AddPostViewState extends State<AddPostView> {
                           return 'Please enter the restaurant address';
                         }
                         return null;
+                      },
+                      controller: locationCtl,
+                      onTap: () async {
+                        Prediction p = await PlacesAutocomplete.show(
+                            context: context,
+                            apiKey: AppConstants.GOOGLE_API_KEY,
+                            mode: Mode.fullscreen,
+                            // Mode.fullscreen
+                            language: "en",
+                            components: [
+                              new Component(Component.country, "my")
+                            ]);
+                        if (p != null) {
+                          PlacesDetailsResponse detail =
+                              await _places.getDetailsByPlaceId(p.placeId);
+                          double lat = detail.result.geometry.location.lat;
+                          double lng = detail.result.geometry.location.lng;
+                          String name = detail.result.name;
+                          String address = detail.result.formattedAddress;
+
+                          locationCtl.text = name;
+                          setState(() {
+                            _newpost.location = new LocationDTO(
+                                latitude: lat,
+                                longitude: lng,
+                                locationName: name,
+                                locationAddress: address);
+                          });
+                        }
                       },
                     ),
                     SizedBox(height: 10.0),

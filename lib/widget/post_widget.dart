@@ -93,7 +93,7 @@ class _PostWidgetState extends State<PostWidget> {
             ),
             trailing: IconButton(
               icon: Icon(
-                Icons.location_on,
+                Icons.location_pin,
                 size: 30.0,
               ),
               onPressed: () {
