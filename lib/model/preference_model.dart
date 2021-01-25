@@ -15,7 +15,6 @@ class PreferenceModel {
     this.lastModifiedDate,
   });
 
-
   factory PreferenceModel.fromJson(Map<String, dynamic> json) {
     return PreferenceModel(
       id: json['id'] as int,

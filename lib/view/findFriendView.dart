@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/view/profileView.dart';
 import 'package:foody_app/widget/app_bar.dart';
 import 'package:foody_app/model/user_list_dto.dart';
@@ -11,16 +12,16 @@ class FindFriendView extends StatefulWidget {
 
   @override
   _FindFriendViewState createState() => _FindFriendViewState();
-
 }
 
 class _FindFriendViewState extends State<FindFriendView> {
   Future<List<UserListDTO>> users;
+  final fieldText = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    users = FollowingHTTPService.getAllFollowingUsers();
+    searchUser("");
   }
 
   void searchUser(username) {
@@ -33,11 +34,15 @@ class _FindFriendViewState extends State<FindFriendView> {
     });
   }
 
+  void clearText(){
+    fieldText.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: FoodyAppBar(),
-      body: new Column(
+      body: Column(
         children: <Widget>[
           Align(
             alignment: Alignment.centerLeft,
@@ -58,7 +63,6 @@ class _FindFriendViewState extends State<FindFriendView> {
             child: new TextField(
               onChanged: (value) {
                 searchUser(value);
-
               },
               decoration: InputDecoration(
                 suffixIcon: Icon(Icons.search, color: Colors.black54,),
@@ -71,14 +75,14 @@ class _FindFriendViewState extends State<FindFriendView> {
                     borderSide: const BorderSide(color: Colors.black26, width: 2.0),
                     borderRadius: BorderRadius.circular(32.0)
               )
-              )
+              ),
+              controller: fieldText,
             )
           ),
           Expanded(
             child: FutureBuilder<List<UserListDTO>>(
               future: users,
               builder: (context, snapshot) {
-                print(snapshot);
                 if (snapshot.hasData) {
                   return ListView.builder(
                       itemCount: snapshot.data.length,
@@ -96,7 +100,8 @@ class _FindFriendViewState extends State<FindFriendView> {
                                       shape: BoxShape.circle,
                                       image: new DecorationImage(
                                           fit: BoxFit.contain,
-                                          image: new NetworkImage('${snapshot.data[index].imageUrl}')
+                                          image: new NetworkImage(snapshot.data[index].imageUrl ??
+                                          "https://thumbs.dreamstime.com/b/default-avatar-photo-placeholder-profile-picture-default-avatar-photo-placeholder-profile-picture-eps-file-easy-to-edit-125707135.jpg")
                                       )
                                   )
                               )
@@ -104,10 +109,12 @@ class _FindFriendViewState extends State<FindFriendView> {
                           title: Text('${snapshot.data[index].username}'),
                           trailing: IconButton(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ProfileView()),
-                                );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => ProfileView(userId: snapshot.data[index].id)),
+                                ).then((_){
+                                  clearText();
+                                  searchUser("");
+                                });
                               },
                               icon: Icon(Icons.chevron_right)
                           ),
@@ -115,19 +122,30 @@ class _FindFriendViewState extends State<FindFriendView> {
                       }
                   );
                 } else {
-                  return Container();
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: Column(
+                      children:[
+                        Text(
+                            "No following users.",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.TEXT_COLOR
+                            )
+                        ),
+                        Text(
+                            "Search and follow new friends.",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.TEXT_COLOR
+                            )
+                        ),
+                      ]
+                    ),
+                  );
                 }
               }
-
             )
-
-
-
-
-
-
-
-
           )
         ],
       )
