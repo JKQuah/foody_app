@@ -15,10 +15,12 @@ class MeatViewAll extends StatefulWidget {
 }
 
 class _MeatViewAllState extends State<MeatViewAll> {
+  Future<List<MeatModel>> upcomingMeatMeatModels;
   Future<List<MeatModel>> futureMeatMeatModels;
 
   @override
   void didChangeDependencies() {
+    upcomingMeatMeatModels = MeatHTTPService.getUpcomingMeats();
     futureMeatMeatModels = MeatHTTPService.getExploreMeats();
     super.didChangeDependencies();
   }
@@ -29,11 +31,14 @@ class _MeatViewAllState extends State<MeatViewAll> {
         resizeToAvoidBottomInset: false,
         appBar: FoodyAppBar(),
         body: SingleChildScrollView(
-          child: FutureBuilder<List<MeatModel>>(
-            future: futureMeatMeatModels,
-            builder: (context, AsyncSnapshot<List<MeatModel>> snapshot) {
+          child: FutureBuilder<List<dynamic>>(
+            future: Future.wait([upcomingMeatMeatModels, futureMeatMeatModels]),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.hasData) {
-                List<MeatModel> exploringMeats = snapshot.data;
+                List<MeatModel> upcomingMeatMeatModels =
+                snapshot.data[0] as List<MeatModel>;
+                List<MeatModel> exploringMeats =
+                snapshot.data[1] as List<MeatModel>;
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -154,10 +159,30 @@ class UpcomingMeatCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.network(
-              meatModel.imageUrl,
-              fit: BoxFit.fitWidth,
-              height: 260,
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(1),
+                    topRight: Radius.circular(1),
+                    bottomLeft: Radius.circular(1),
+                    bottomRight: Radius.circular(1)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Image.network(
+                meatModel.imageUrl,
+                fit: BoxFit.fitWidth,
+                height: 260,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(
