@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:foody_app/model/mesage_model.dart';
 import 'package:foody_app/model/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 
 class ChatScreen extends StatefulWidget {
@@ -94,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: Icon(Icons.photo),
             iconSize: 25.0,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).primaryColorDark,
             onPressed: () {},
           ),
           Expanded(
@@ -109,7 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: Icon(Icons.send),
             iconSize: 25.0,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).primaryColorDark,
             onPressed: () {},
           ),
         ],
@@ -134,7 +132,7 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: Icon(Icons.more_horiz),
             iconSize: 30.0,
-            color: Colors.white,
+            color: Colors.black,
             onPressed: () {},
           ),
         ],
@@ -177,3 +175,4 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+*/

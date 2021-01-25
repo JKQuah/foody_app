@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:foody_app/widget/category_selector.dart';
 import 'package:foody_app/widget/recent_chats.dart';
 
@@ -67,3 +67,4 @@ class _ChatRoomViewState extends State<ChatRoomView> {
     );
   }
 }
+*/
