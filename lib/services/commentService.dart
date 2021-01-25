@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:foody_app/model/comment.dart';
-import 'package:foody_app/utils/sharedPreferenceUtils.dart';
+import 'package:foody_app/utils/HTTPUtils.dart';
+import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:http/http.dart';
 import 'package:foody_app/resource/app_constants.dart';
 
@@ -12,7 +13,7 @@ class CommentService {
   Future<List<Comment>> fetchComments(int postId) async {
     String url = commentURL + "/$postId";
     // print(url);
-    Map<String, String> headers = await SharedPreferenceUtils.getHeaders();
+    Map<String, String> headers = await HTTPUtils.getHeaders();
     Response response = await get(url, headers: headers);
     // print(response);
     if (response.statusCode == 200) {
@@ -31,7 +32,7 @@ class CommentService {
   // Create a comment
   Future<int> createComment(Comment comment) async {
     String url = commentURL;
-    Map<String, String> headers = await SharedPreferenceUtils.getHeaders();
+    Map<String, String> headers = await HTTPUtils.getHeaders();
     headers['Content-Type'] = 'application/json; charset=UTF-8';
     Map<String, dynamic> jsonRequest = comment.toJson();
 
@@ -51,7 +52,7 @@ class CommentService {
   // Delete a comment
   Future<bool> deleteComment(int commandId) async {
     String url = commentURL + "/$commandId";
-    Map<String, String> headers = await SharedPreferenceUtils.getHeaders();
+    Map<String, String> headers = await HTTPUtils.getHeaders();
     headers['Content-Type'] = 'application/json; charset=UTF-8';
     Response response = await delete(url, headers: headers);
     if (response.statusCode == 200) {

@@ -1,7 +1,7 @@
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HTTPUtils {
-
   static const String jwtKey = 'jwt';
 
   static void saveJWToken(String jwtToken) async {
@@ -23,5 +23,11 @@ class HTTPUtils {
     String jwtToken = await readJWToken();
     Map<String, String> headers = {"Authorization": "Bearer " + jwtToken};
     return headers;
+  }
+
+  static Future<int> decodeJWT() async {
+    String jwt = await readJWToken();
+    Map<String, dynamic> payload = Jwt.parseJwt(jwt);
+    return int.parse(payload['id']);
   }
 }

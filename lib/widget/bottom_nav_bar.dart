@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foody_app/resource/app_colors.dart';
-import 'package:foody_app/utils/sharedPreferenceUtils.dart';
+import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:foody_app/view/findFriendView.dart';
 import 'package:foody_app/view/foodSuggestion.dart';
 import 'package:foody_app/view/homeView.dart';
@@ -28,10 +28,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   // ];
 
   Widget _getPage(int index) {
-    SharedPreferenceUtils.decodeJWT().then((data){
+    HTTPUtils.decodeJWT().then((data) {
       myId = data;
     });
-    switch (index){
+    switch (index) {
       case 0:
         return HomeView();
         break;

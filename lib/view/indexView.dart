@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/resource/app_constants.dart';
-import 'package:foody_app/utils/sharedPreferenceUtils.dart';
+import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:foody_app/view/loadingView.dart';
 import 'package:foody_app/widget/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     String jwtToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJpYXQiOjE2MTE1ODg5NjcsImV4cCI6MTYxMTY3NTM2N30.Yl4vAHo5b6dA496SMOuRM-yqrk1XiXF362GA0r6Nhy8";
-    SharedPreferenceUtils.saveJWToken(jwtToken);
+    HTTPUtils.saveJWToken(jwtToken);
     super.initState();
   }
 
