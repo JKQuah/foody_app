@@ -9,24 +9,26 @@ import 'package:foody_app/utils/convertUtils.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MeatViewOne extends StatefulWidget {
-  MeatViewOne({Key key}) : super(key: key);
+  int meatId;
+
+  MeatViewOne(this.meatId, {Key key}) : super(key: key);
 
   @override
-  _MeatViewOneState createState() => _MeatViewOneState();
+  _MeatViewOneState createState() => _MeatViewOneState(meatId);
 }
 
 class _MeatViewOneState extends State<MeatViewOne> {
+  int meatId;
+
+  _MeatViewOneState(this.meatId);
+
   Future<MeatModel> futureMeatModel;
   Completer<GoogleMapController> _controller = Completer();
 
   @override
-  void didChangeDependencies() async {
-    futureMeatModel = MeatHTTPService.getOneMeat(43);
-    MeatModel meatModel = (await futureMeatModel);
-
-    print(meatModel.toJson());
-
-    super.didChangeDependencies();
+  void initState() {
+    futureMeatModel = MeatHTTPService.getOneMeat(meatId);
+    super.initState();
   }
 
   @override
@@ -75,7 +77,7 @@ class _MeatViewOneState extends State<MeatViewOne> {
                           Text(
                             snapshot.data.title,
                             style: TextStyle(
-                              fontSize: 40,
+                              fontSize: 32,
                               fontWeight: FontWeight.bold,
                               color: AppColors.PRIMARY_COLOR,
                             ),
@@ -152,7 +154,9 @@ class _MeatViewOneState extends State<MeatViewOne> {
                               },
                               markers: {
                                 Marker(
-                                    markerId: MarkerId(DateTime.now().microsecondsSinceEpoch.toString()),
+                                    markerId: MarkerId(DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString()),
                                     position: LatLng(
                                         snapshotMeat.locationDTO.latitude,
                                         snapshotMeat.locationDTO.longitude),
@@ -229,15 +233,29 @@ class UpdateButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text(
-        "Update",
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Icon(
+              Icons.edit,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Update",
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
+        backgroundColor:
+            MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
       ),
       onPressed: () async {
         // Navigator.push(context, route)
@@ -274,15 +292,29 @@ class JoinButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text(
-        "Join",
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Icon(
+              Icons.person_add,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Join",
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
+        backgroundColor:
+            MaterialStateProperty.all<Color>(AppColors.WARNING_COLOR),
       ),
       onPressed: () async {
         try {
@@ -293,7 +325,8 @@ class JoinButton extends StatelessWidget {
         } on Exception catch (_) {
           print("join meat HTTP fail");
           Scaffold.of(context).showSnackBar(SnackBar(
-              backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to join")));
+              backgroundColor: AppColors.DANGER_COLOR,
+              content: Text("Fail to join")));
         }
       },
     );
@@ -308,15 +341,29 @@ class UnjoinButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text(
-        "Unjoin",
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Icon(
+              Icons.person_remove,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Unjoin",
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(AppColors.DANGER_COLOR),
+        backgroundColor:
+            MaterialStateProperty.all<Color>(AppColors.DANGER_COLOR),
       ),
       onPressed: () async {
         try {
@@ -327,7 +374,8 @@ class UnjoinButton extends StatelessWidget {
         } on Exception catch (_) {
           print("unjoin meat HTTP fail");
           Scaffold.of(context).showSnackBar(SnackBar(
-              backgroundColor: AppColors.DANGER_COLOR, content: Text("Fail to unjoin")));
+              backgroundColor: AppColors.DANGER_COLOR,
+              content: Text("Fail to unjoin")));
         }
       },
     );
