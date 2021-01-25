@@ -22,4 +22,9 @@ class SharedPreferenceUtils {
     Map<String, String> headers = {"Authorization": "Bearer " + jwtToken};
     return headers;
   }
+
+  static Future<int> decodeJWT() async {
+    Map<String, dynamic> payload = Jwt.parseJwt(jwtKey);
+    return int.parse(payload['id']);
+  }
 }

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:foody_app/model/like_model.dart';
 import 'package:foody_app/model/post_model.dart';
 import 'package:foody_app/services/userService.dart';
+import 'package:foody_app/model/post_grid_dto.dart';
+import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:foody_app/utils/sharedPreferenceUtils.dart';
 import 'package:http/http.dart';
 import 'package:foody_app/resource/app_constants.dart';
@@ -91,4 +93,22 @@ class PostService {
     print("Create like status : ${response.statusCode}");
     return response.statusCode == 201;
   }
+  // Get all post
+  static Future<List<PostGridDTO>> getGridPosts(userId) async {
+    String requestUrl = "${postURL}/grid/${userId}";
+    Map<String, String> headers = await HTTPUtils.getHeaders();
+    Response res = await get(requestUrl, headers: headers);
+    if(res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+      List<PostGridDTO> gridPosts =
+      body.map((dynamic item) => PostGridDTO.fromJson(item)).toList();
+      if(gridPosts.isEmpty){
+        return null;
+      }
+      return gridPosts;
+    } else {
+      throw Exception("Error at FollowingHTTPService getAllFollowingUsers: ${res.body.toString()}");
+    }
+  }
+
 }
