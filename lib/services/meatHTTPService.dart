@@ -57,7 +57,9 @@ class MeatHTTPService {
     String locationParams = "";
     String preferencesParams = "";
     if (locationDTO != null) {
-      locationParams = "latitude=${locationDTO.latitude}&longitude=${locationDTO.longitude}";
+      if (locationDTO.longitude != null && locationDTO.latitude != null) {
+        locationParams = "latitude=${locationDTO.latitude}&longitude=${locationDTO.longitude}";
+      }
     }
     if (preferences != null) {
       preferencesParams = preferences.map((e) => "&${e.id}").join();

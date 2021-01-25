@@ -257,13 +257,16 @@ class _MeatViewAllState extends State<MeatViewAll> {
   }
 
   bool hasPrefFilter() {
-    bool hasPrefFilter =
-        this.selectedPreferences != null || this.selectedPreferences.length > 0;
-    return hasPrefFilter;
+    bool isNull = this.selectedPreferences == null;
+    if (isNull) return false;
+    bool hasElement = this.selectedPreferences.length > 0;
+    return hasElement;
   }
 
   bool hasLocFilter() {
-    bool hasLoc = this.selectedLocation != null;
+    bool isNull = this.selectedLocation == null;
+    if (isNull) return false;
+    bool hasLoc = this.selectedLocation.latitude != null && this.selectedLocation.longitude != null;
     return hasLoc;
   }
 }
