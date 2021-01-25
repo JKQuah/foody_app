@@ -57,7 +57,8 @@ class ChatHeaderWidget extends StatelessWidget {
                         },
                         child: CircleAvatar(
                           radius: 24,
-                          backgroundImage: NetworkImage(user.urlAvatar),
+                          backgroundImage: NetworkImage(user.urlAvatar ??
+                              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-vector%2Ferror-404-found-glitch-effect_2324869.htm&psig=AOvVaw21dSmS8EKi6zgYxmz2fXGG&ust=1611684923034000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCIjl2K3Yt-4CFQAAAAAdAAAAABAD"),
                         ),
                       ),
                     );

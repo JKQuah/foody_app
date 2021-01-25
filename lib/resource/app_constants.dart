@@ -58,7 +58,7 @@ class AppConstants {
   /*----------------------------ERROR_MESSAGE---------------------------------*/
   static const String EMAIL_ERROR_MSG = "Invalid Email Address Format";
   static const String PASSWORD_ERROR_MSG =
-      "Password must be at least 8 characters";
+      "Password must be at least 4 characters";
   static const String UNSUCCESSFUL_LOGIN_MSG = "Invalid credentials";
   static const String WEAK_NETWORK_ERROR_MSG = "Weak Internet Connection";
   static const String TRY_AGAIN_ERROR_MSG = "Please try again later";
