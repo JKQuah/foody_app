@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/view/addPostView.dart';
-import 'package:foody_app/view/chatRoomView.dart';
+import 'package:foody_app/chat/chat_main.dart';
 
 class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const FoodyAppBar({Key key}) : super(key: key);
@@ -14,7 +14,8 @@ class FoodyAppBar extends StatelessWidget implements PreferredSizeWidget {
   void openChatRoom(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return ChatRoomView();
+        //return ChatRoomView();
+        return FoodyChat();
       },
     ));
   }
