@@ -5,7 +5,7 @@ import 'package:foody_app/utils/convertUtils.dart';
 import 'package:foody_app/widget/app_bar.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
 
-import 'meatCreate.dart';
+import 'meatUpdate.dart';
 
 class MeatViewAll extends StatefulWidget {
   MeatViewAll({Key key}) : super(key: key);

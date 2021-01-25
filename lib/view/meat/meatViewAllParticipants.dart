@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foody_app/model/meat_participant_model.dart';
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/services/meatHTTPService.dart';
-import 'package:foody_app/view/meat/meatCreate.dart';
+import 'package:foody_app/view/meat/meatUpdate.dart';
 import 'package:foody_app/view/meat/meatViewOne.dart';
 import 'package:foody_app/widget/app_bar.dart';
 

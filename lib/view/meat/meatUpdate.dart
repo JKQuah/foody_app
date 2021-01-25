@@ -19,14 +19,14 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:foody_app/widget/app_bar.dart';
 
-class MeatCreate extends StatefulWidget {
-  MeatCreate({Key key}) : super(key: key);
+class MeatUpdate extends StatefulWidget {
+  MeatUpdate({Key key}) : super(key: key);
 
   @override
-  _MeatCreateState createState() => _MeatCreateState();
+  _MeatUpdateState createState() => _MeatUpdateState();
 }
 
-class _MeatCreateState extends State<MeatCreate> {
+class _MeatUpdateState extends State<MeatUpdate> {
   final _formKey = GlobalKey<FormState>();
   final _picker = ImagePicker();
   dynamic imageUrl = "";
