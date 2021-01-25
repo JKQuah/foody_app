@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foody_app/model/post_model.dart';
-import 'package:foody_app/model/user_list_dto.dart';
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/services/followingHTTPService.dart';
 import 'package:foody_app/services/postService.dart';
@@ -9,7 +7,6 @@ import 'package:foody_app/widget/app_bar.dart';
 import 'package:foody_app/model/post_grid_dto.dart';
 import 'package:foody_app/model/profile_dto.dart';
 import 'package:foody_app/services/profileHTTPService.dart';
-import 'package:foody_app/utils/HTTPUtils.dart';
 
 class ProfileView extends StatefulWidget {
   final int userId;

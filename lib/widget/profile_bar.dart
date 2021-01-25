@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:foody_app/chat/chats_page.dart';
 import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/view/chatRoomView.dart';
 
@@ -12,7 +13,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   void openChatRoom(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
-        return ChatRoomView();
+        return ChatsPage();
       },
     ));
   }

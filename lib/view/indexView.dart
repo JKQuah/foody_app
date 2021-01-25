@@ -8,20 +8,24 @@ import 'package:foody_app/widget/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  final String token;
+  MyHomePage({Key key, this.token}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState(token: token);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final String token;
   @override
   void initState() {
-    String jwtToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJpYXQiOjE2MTE1ODg5NjcsImV4cCI6MTYxMTY3NTM2N30.Yl4vAHo5b6dA496SMOuRM-yqrk1XiXF362GA0r6Nhy8";
+    String jwtToken = token;
+    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJpYXQiOjE2MTE1ODg5NjcsImV4cCI6MTYxMTY3NTM2N30.Yl4vAHo5b6dA496SMOuRM-yqrk1XiXF362GA0r6Nhy8";
     HTTPUtils.saveJWToken(jwtToken);
     super.initState();
   }
+
+  _MyHomePageState({this.token});
 
   Future<bool> _onWillPop() async {
     return (await showDialog(

@@ -97,7 +97,7 @@ class PostService {
   // Get all post
   static Future<List<PostGridDTO>> getGridPosts(userId) async {
     final String postURL = AppConstants.APP_BASE_URL + "/post";
-    String requestUrl = "/$postURL/grid/$userId";
+    String requestUrl = "$postURL/grid/$userId";
     Map<String, String> headers = await HTTPUtils.getHeaders();
     Response res = await get(requestUrl, headers: headers);
     if (res.statusCode == 200) {
