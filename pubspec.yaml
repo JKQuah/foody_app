@@ -30,8 +30,21 @@ dependencies:
   flutter_chips_input: ^1.9.5
   image_picker: ^0.6.7+21
   flutter:
-    sdk: flutter
+      sdk: flutter
 
+  intl: ^0.16.1
+  http: ^0.12.2
+  shared_preferences: ^0.5.12+4
+  google_maps_webservice: ^0.0.19
+  flutter_google_places: ^0.2.3
+  flutter_chips_input: ^1.9.5
+  image_picker: ^0.6.7+21
+  expandable: ^4.1.4
+  flutter_rating_bar: ^3.2.0+1
+  geolocator: ^6.1.14
+  provider: ^4.3.3
+  url_launcher: ^5.7.10
+  flutter_launcher_icons: "^0.8.0"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -41,7 +54,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   
-  flutter_launcher_icons: "^0.8.0"
 
   # App Icon
 flutter_icons:
