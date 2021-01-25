@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     String jwtToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJpYXQiOjE2MTE0ODEzNTcsImV4cCI6MTYxMTU2Nzc1N30.1SrS_GEacUG-BTI2SxcUuvN6vOT9KsA0N4OJ657x3FI";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJpYXQiOjE2MTE1ODg5NjcsImV4cCI6MTYxMTY3NTM2N30.Yl4vAHo5b6dA496SMOuRM-yqrk1XiXF362GA0r6Nhy8";
     SharedPreferenceUtils.saveJWToken(jwtToken);
     super.initState();
   }

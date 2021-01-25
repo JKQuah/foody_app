@@ -21,19 +21,12 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  intl: ^0.16.1
-  http: ^0.12.2
-  shared_preferences: ^0.5.12+4
-  google_maps_flutter: ^0.5.19
-  google_maps_webservice: ^0.0.19
-  flutter_google_places: ^0.2.3
-  flutter_chips_input: ^1.9.5
-  image_picker: ^0.6.7+21
   flutter:
       sdk: flutter
 
   intl: ^0.16.1
   http: ^0.12.2
+  google_maps_flutter: ^0.5.19
   shared_preferences: ^0.5.12+4
   google_maps_webservice: ^0.0.19
   flutter_google_places: ^0.2.3
