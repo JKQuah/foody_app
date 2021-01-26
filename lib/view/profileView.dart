@@ -95,7 +95,7 @@ class _ProfileViewState extends State<ProfileView> {
                                         decoration: new BoxDecoration(
                                             shape: BoxShape.circle,
                                             image: new DecorationImage(
-                                                fit: BoxFit.contain,
+                                                fit: BoxFit.cover,
                                                 image: new NetworkImage(
                                                   snapshot.data.imageUrl ??
                                                       "https://thumbs.dreamstime.com/b/default-avatar-photo-placeholder-profile-picture-default-avatar-photo-placeholder-profile-picture-eps-file-easy-to-edit-125707135.jpg",

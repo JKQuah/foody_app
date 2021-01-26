@@ -3,6 +3,7 @@ import 'package:foody_app/resource/app_colors.dart';
 import 'package:foody_app/resource/app_constants.dart';
 import 'package:foody_app/services/authService.dart';
 import 'package:foody_app/view/indexView.dart';
+import 'package:foody_app/view/signup.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key key}) : super(key: key);
@@ -132,10 +133,30 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
               ),
-              Flexible(
-                flex: 2,
-                child: Text(""),
-              )
+              Divider(
+                height: 2.0,
+              ),
+              FlatButton(
+                child: Text(
+                  AppConstants.SIGNUP_BUTTON_LABEL,
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                color: AppColors.ACCENT_COLOR,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SignUp()),
+                  );
+                },
+                height: 50.0,
+                minWidth: 200.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0),
+                ),
+              ),
             ],
           ),
         ),

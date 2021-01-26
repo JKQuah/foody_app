@@ -85,7 +85,7 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
             subtitle: Text(
-              widget.post.location.locationName ?? 'No Restaurant',
+              widget.post.location.locationName ?? 'Mid Valley',
               style: TextStyle(
                 fontSize: 18.0,
                 color: AppColors.PRIMARY_COLOR,

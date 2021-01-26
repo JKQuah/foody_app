@@ -18,7 +18,7 @@ class SuggestionFilter extends StatefulWidget {
 class _SuggestionFilterState extends State<SuggestionFilter> {
   Future<List<PreferenceModel>> futurePreferences;
   GoogleMapsPlaces _places =
-      GoogleMapsPlaces(apiKey: AppConstants.googleApiKey);
+      GoogleMapsPlaces(apiKey: AppConstants.GOOGLE_API_KEY);
   final TextEditingController locationCtl = TextEditingController();
   LocationDTO locationDTO = new LocationDTO();
   List<PreferenceModel> selectedPreferences = [];
@@ -89,7 +89,7 @@ class _SuggestionFilterState extends State<SuggestionFilter> {
                     onTap: () async {
                       Prediction p = await PlacesAutocomplete.show(
                           context: context,
-                          apiKey: AppConstants.googleApiKey,
+                          apiKey: AppConstants.GOOGLE_API_KEY,
                           mode: Mode.fullscreen,
                           language: "en",
                           components: [new Component(Component.country, "my")]);
@@ -170,8 +170,7 @@ class _SuggestionFilterState extends State<SuggestionFilter> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(
                   Icons.filter_alt,
                   color: Colors.white,
@@ -193,13 +192,12 @@ class _SuggestionFilterState extends State<SuggestionFilter> {
           ),
           onPressed: () {
             print("let's filter!");
-            List<int> preferenceIds = selectedPreferences.map((e) => e.id).toList();
-            print("preferences: "+ preferenceIds.toString());
+            List<int> preferenceIds =
+                selectedPreferences.map((e) => e.id).toList();
+            print("preferences: " + preferenceIds.toString());
             print(locationDTO.toJson());
-            Navigator.pop(context,{
-              "preferences": selectedPreferences,
-              "location": locationDTO
-            });
+            Navigator.pop(context,
+                {"preferences": selectedPreferences, "location": locationDTO});
           },
         ),
       ),

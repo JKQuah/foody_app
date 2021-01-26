@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:foody_app/resource/app_colors.dart';
+import 'package:foody_app/view/login.dart';
 import 'package:foody_app/view/loginView.dart';
 import 'indexView.dart';
 
@@ -60,7 +61,7 @@ class _LoadingState extends State<Loading> {
                 fontSize: 16.0,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

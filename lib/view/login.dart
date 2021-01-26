@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:foody_app/services/authService.dart';
+import 'package:foody_app/view/indexView.dart';
 import 'package:foody_app/view/signup.dart';
 import 'package:foody_app/utils/HTTPUtils.dart';
 import 'package:foody_app/resource/app_constants.dart';
@@ -75,55 +77,75 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text("LOGIN"),
                       onPressed: () async {
                         // save the fields..
-                        final form = _formKey.currentState;
-                        form.save();
+                        // final form = _formKey.currentState;
+                        // form.save();
 
-                        String requestUrl = loginURL;
-                        Map<String, String> headers =
-                            await HTTPUtils.getHeaders();
-                        headers["Content-Type"] =
-                            'application/json; charset=UTF-8';
-                        Response res = await post(
-                          requestUrl,
-                          headers: headers,
-                          body: jsonEncode(<String, String>{
-                            "email": _email,
-                            "password": _password
-                          }),
-                        );
-                        if (res.statusCode == 200) {
-                          Map<String, dynamic> json = jsonDecode(res.body);
-                          //save token
-                          HTTPUtils.saveJWToken(json["token"]);
-                          // navigate to home page
-                          //need to ask quah
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => HomeView()),
-                          );
-                        } else if (res.statusCode == 400) {
-                          // wrong password
-                          emailCtl.text = "";
-                          passCtl.text = "";
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                              backgroundColor: AppColors.DANGER_COLOR,
-                              content: Text(
-                                  "The email address or password are entered wrongly! Please try again.")));
+                        // String requestUrl = loginURL;
+                        // Map<String, String> headers =
+                        //     await HTTPUtils.getHeaders();
+                        // headers["Content-Type"] =
+                        //     'application/json; charset=UTF-8';
+                        // Response res = await post(
+                        //   requestUrl,
+                        //   headers: headers,
+                        //   body: jsonEncode(<String, String>{
+                        //     "email": _email,
+                        //     "password": _password
+                        //   }),
+                        // );
+                        // if (res.statusCode == 200) {
+                        //   Map<String, dynamic> json = jsonDecode(res.body);
+                        //   //save token
+                        //   HTTPUtils.saveJWToken(json["token"]);
+                        //   // navigate to home page
+                        //   //need to ask quah
+                        //   Navigator.of(context).push(
+                        //     MaterialPageRoute(builder: (context) => HomeView()),
+                        //   );
+                        // } else if (res.statusCode == 400) {
+                        //   // wrong password
+                        //   emailCtl.text = "";
+                        //   passCtl.text = "";
+                        //   // ignore: deprecated_member_use
+                        //   Scaffold.of(context).showSnackBar(SnackBar(
+                        //       backgroundColor: AppColors.DANGER_COLOR,
+                        //       content: Text(
+                        //           "The email address or password are entered wrongly! Please try again.")));
+                        // } else {
+                        //   // throw Exception("Error at Login");
+                        //   emailCtl.text = "";
+                        //   passCtl.text = "";
+                        // }
+                        if (_formKey.currentState.validate()) {
+                          _formKey.currentState.save();
+                          Map<String, String> login =
+                              await AuthService().login(_email, _password);
+                          print(login['tokens']);
+                          if (login['token'] != "false") {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MyHomePage(token: login['token'])),
+                            );
+                          } else {
+                            print("error");
+                          }
                         } else {
-                          // throw Exception("Error at Login");
-                          emailCtl.text = "";
-                          passCtl.text = "";
+                          print("missing");
                         }
                       }),
                   SizedBox(
                     height: 15.0,
                   ),
                   RaisedButton(
-                      child: Text("SignUp / Register with Us"),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => SignUp()),
-                        );
-                      }),
+                    child: Text("SignUp / Register with Us"),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => SignUp()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

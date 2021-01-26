@@ -10,12 +10,14 @@ class AuthService {
   Future<Map<String, String>> login(String email, String psw) async {
     String url = userURL + "/login";
     Map<String, String> headers = await HTTPUtils.getHeaders();
-    // headers['Content-Type'] = 'application/json; charset=UTF-8';
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
     Map<String, String> jsonBody = {
       "email": email,
       "password": psw,
     };
-    Response response = await post(url, headers: headers, body: jsonBody);
+    print(jsonBody);
+    Response response =
+        await post(url, headers: headers, body: jsonEncode(jsonBody));
 
     if (response.statusCode == 200) {
       dynamic body = jsonDecode(response.body);

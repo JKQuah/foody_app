@@ -18,6 +18,7 @@ class MeatHTTPService {
     headers["Content-Type"] = 'application/json; charset=UTF-8';
     Response res = await post(requestUrl,
         headers: headers, body: jsonEncode(meatModel.toJson()));
+    print(res.statusCode);
     if (res.statusCode == 201) {
       Map<String, dynamic> json = jsonDecode(res.body);
       return ConvertUtils.fromDynamicToInt(json["meatId"]);

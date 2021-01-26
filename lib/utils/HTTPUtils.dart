@@ -21,7 +21,7 @@ class HTTPUtils {
 
   static Future<Map<String, String>> getHeaders() async {
     String jwtToken = await readJWToken();
-    Map<String, String> headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIyIiwiaWF0IjoxNjExNTcyOTg5LCJleHAiOjE2MTE2NTkzODl9.oPkRs37i1oIcqhSgsMwA417D5RYHV1mpfHOYkSIV93w"};
+    Map<String, String> headers = {"Authorization": "Bearer $jwtToken"};
     return headers;
   }
 
