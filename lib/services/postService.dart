@@ -113,4 +113,23 @@ class PostService {
           "Error at FollowingHTTPService getAllFollowingUsers: ${res.body.toString()}");
     }
   }
+
+  //Get Suggestion
+  Future<List<PostModel>> getSuggestionPosts() async {
+    String url = postURL;
+    Map<String, String> headers = await HTTPUtils.getHeaders();
+    Response response = await get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+
+      List<PostModel> postModels =
+      body.map((dynamic e) => PostModel.fromJson(e)).toList();
+      // print(postModels);
+      return postModels;
+    } else {
+      print(response.statusCode);
+      throw Exception("Unable to get posts!! ");
+    }
+  }
 }
